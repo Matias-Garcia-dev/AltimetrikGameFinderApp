@@ -1,0 +1,23 @@
+{
+  "name": "altimetrikgamefinderapp",
+  "version": "1.0.0",
+  "description": "Altimetrik proyect",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Matias-Garcia-dev/AltimetrikGameFinderApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Matias-Garcia-dev/AltimetrikGameFinderApp/issues"
+  },
+  "homepage": "https://github.com/Matias-Garcia-dev/AltimetrikGameFinderApp#readme",
+  "devDependencies": {
+    "json-server": "^0.16.3",
+    "json-server-auth": "^2.1.0"
+  }
+}
