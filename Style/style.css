@@ -44,7 +44,6 @@ h1 {
   width: 100%;
   height: 61px;
   color: #ffffff;
-  font-style: normal;
   font-weight: 400;
   font-size: 45px;
   line-height: 61px;
@@ -162,7 +161,7 @@ input[type="checkbox"]:checked {
   background: #7cd235;
   content: normal;
   background-position: center;
-  background-image: url(/Style/access/check.png);
+  background-image: url(/style/image-icons/check.png);
   background-repeat: no-repeat;
   border: none;
 }
