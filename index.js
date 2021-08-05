@@ -5,7 +5,7 @@ const error = document.querySelector('error')
 
 form.addEventListener('submit', (e) => {
   let messages =[]
-  if( user === "admin" && password === "admin"){
+  if( user === "admin" && password === "admin") {
     alert("Entered correct");
     e.preventDefault()
   }
