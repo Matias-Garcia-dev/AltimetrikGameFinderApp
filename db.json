@@ -2,8 +2,18 @@
   "users": [
     {
       "email": "admin@admin.com",
-      "password": "admin",
+      "password": "asdoaldhkljqwhej@asdasdkajhsdkjahsd%$%&//%=)asd1",
       "id": 1
+    },
+    {
+      "email": "admin@admi.com",
+      "password": "$2a$10$jlNnIACLVZCrltyzGBMzI.5oyQ8i9h4WQ6S2nnF61gL313u.4iAK2",
+      "id": 2
+    },
+    {
+      "email": "asda@sd.com",
+      "password": "$2a$10$gv/cJ/GctEeORUNGCLGIf.pQxlgEHIsFxk.IZwMfSQK3fuefzsQQG",
+      "id": 3
     }
   ]
 }

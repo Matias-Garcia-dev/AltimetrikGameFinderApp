@@ -1,21 +1,88 @@
-const form = document.querySelector('form')
-const user = document.querySelector('useremail')
-const password = document.querySelector('password-input')
-const error = document.querySelector('error')
+const form = document.querySelector('form');
+const user = document.getElementById('useremail');
+const password = document.getElementById('pasword');
+document.getElementById('useremail').addEventListener("click", EventRemoveErrors);
+document.getElementById('password').addEventListener("click", EventRemoveErrors);
+EventRemoveErrors();
+
+function EventRemoveErrors(){
+  document.getElementById('error').style.display='none';
+  document.getElementById('error-pass').style.display='none';
+}
+
 
 form.addEventListener('submit', (e) => {
-  let messages =[]
-  if( user === "admin" && password === "admin") {
-    alert("Entered correct");
-    e.preventDefault()
+  e.preventDefault()
+  const email = document.getElementById('useremail').value;
+  const pass = document.getElementById('password').value; 
+ 
+  if (validateEmail(email) && validatePassword(pass)) {
+    console.log("lo hice!")
+    let loginserver = UserServer(email, pass);
+
+    if(loginserver === "error"){
+      console.log("no lo hize")
+      document.getElementById('error').style.display='flex';
+      document.getElementById('error-pass').style.display='flex';
+    }
+    else{
+      document.cookie = "authToken-" + loginserver.accessToken;
+      window.location = "main.html";
+    }
+
   }
-  else{
+  else {
+    console.log("no lo hize")
     document.getElementById('error').style.display='flex';
     document.getElementById('error-pass').style.display='flex';
-    alert("Entered fail");
-    e.preventDefault()
   }
+
+  function validateEmail(email) {
+  console.log(email)
+  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+  }
+  function validatePassword(password){
+    let valid = false;
+    if ( password.length > 2 && password != ""){
+      valid = true; 
+      console.log(password)
+      return valid;
+    }
+    else {
+      valid = false; 
+      console.log(password)
+      return valid; 
+    }
+  }
+
 })
+
+async function UserServer(email, password){
+  console.log(email)
+  console.log(password)
+  const loginResponse = await fetch("http://localhost:3000/users", {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: `${email}`,
+                password: `${password}`,
+            }),
+
+        }).then(async(loginStatus) => {
+          let loginText = await loginStatus.json();
+          if(loginStatus.status === 200) {
+            return loginText;
+          }
+          else{
+            let error = "error"
+            return error;
+          }
+        })
+}
 
 function myFunction() {
     const textpass = document.getElementById("password");
