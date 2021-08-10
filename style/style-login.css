@@ -319,3 +319,6 @@ i {
     width: 660px;
   }
 }
+.result {
+  display: flex;
+}
