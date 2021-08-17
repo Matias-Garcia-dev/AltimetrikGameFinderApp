@@ -166,7 +166,7 @@ a {
   border-radius: 10px;
 }
 .card-interact-buttom {
-  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
   background-color: transparent;
@@ -180,4 +180,78 @@ a {
   border-radius: 10px 10px 0px 0px;
   height: 204.25px;
   width: 100%;
+}
+.game-title {
+  text-align: left;
+  width: 220px;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 23px;
+  line-height: 31px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bottom-info-card {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.title-plataform-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 23px;
+}
+.date-gif {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+}
+.date-container {
+  width: 186px;
+  height: 46px;
+}
+.text-container {
+  display: flex;
+  justify-content: space-between;
+}
+.text-grid {
+  margin-top: 6px;
+  padding-bottom: 2.5px;
+  color: #939393;
+  font-weight: 300;
+  font-size: 12px;
+}
+.line {
+  width: 186px;
+  border: 1px solid #3d3d3d;
+}
+
+.number-game {
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 22px;
+  color: #2bb34f;
+}
+.plus {
+  margin-right: 3px;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+}
+.gif {
+  margin-top: 6px;
+  width: 47px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #7cd235 0%, #2bb34f 100%);
+  border-radius: 10px;
+}
+.svg-space {
+  height: 13.73px;
+  width: 13px;
+  margin-left: 8px;
 }
