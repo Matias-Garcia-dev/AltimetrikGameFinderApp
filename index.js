@@ -17,11 +17,11 @@ form.addEventListener('submit', (e) => {
   const pass = document.getElementById('password').value; 
  
   if (validateEmail(email) && validatePassword(pass)) {
-    console.log("lo hice!")
+    //console.log("lo hice!")
     let loginserver = UserServer(email, pass);
 
     if(loginserver === "error"){
-      console.log("no lo hize")
+      //console.log("no lo hize")
       document.getElementById('error').style.display='flex';
       document.getElementById('error-pass').style.display='flex';
     }
@@ -32,7 +32,7 @@ form.addEventListener('submit', (e) => {
 
   }
   else {
-    console.log("no lo hize")
+    //console.log("no lo hize")
     document.getElementById('error').style.display='flex';
     document.getElementById('error-pass').style.display='flex';
   }
