@@ -1,7 +1,10 @@
+// cosntants declaration  
 const cardContainer = document.getElementById("card-grid-container");
-const apiKey = "912ff9d8e7e14450a9323db86c7eaecf"
-const url ="https://api.rawg.io/api/games"
+const apiKey = "912ff9d8e7e14450a9323db86c7eaecf";
+const url ="https://api.rawg.io/api/games";
 const urlKey = `${url}?key=${apiKey}`;
+const main = document.getElementById("main");
+const modalOpen = false
 const additionalHeader = {
     method: "GET",
     headers: {
@@ -12,8 +15,7 @@ const additionalHeader = {
 };
 const pagesCounter = 1; 
 
-//const data = callApi(urlKey, additionalHeader)
-//console.log(data)
+// get the informtion from the api 
 callApi(urlKey, additionalHeader).then(resultApi =>{
     console.log(resultApi);
     cardsCreation(resultApi);
@@ -32,21 +34,14 @@ async function callApi(url, info){
 }
 
 
-
-let createcard = `<li class='cards-style'>
-<button class='card-interact-buttom'>
-    <div class='image-card-container'>
-        <img class='image-card' src='style/image-icons/biomutant-card.png' alt='games'>
-    </div>
-</button>
-</li>`;
-
+// start to create the cards
+let createcard = ``;
 function cardsCreation(cardinfo){
     console.log(cardinfo)
     for( let k = 0; k< cardinfo.results.length; k++){
         let actualCard = cardinfo.results[k]
         createcard = `<li class='cards-style' id="${actualCard.id}">
-        <button class='card-interact-buttom'>
+        <button class='card-interact-button'>
             <div class='image-card-container'>
                 <img class='image-card' src='${actualCard.background_image}' alt='games'>
             </div>
@@ -80,9 +75,11 @@ function cardsCreation(cardinfo){
         </button>
         </li>`;
         document.querySelector("#card-grid-container").innerHTML += createcard;
+        clickEventCard()
     }
 }
 
+// platforms icons in the card
 function platformSelector(cardicons){
     let platformSelected = '';
     if (!!cardicons.parent_platforms) {
@@ -228,12 +225,14 @@ function platformSelector(cardicons){
     return platformSelected;
 }
 
+// cards release date
 function dateRelease(date){
    const actualDate = (new Date(date.released)).toString().split(' ');
    //console.log(actualDate)
    return `${actualDate[1]} ${actualDate[2]} ${actualDate[3]}`;
 }
 
+ // Cards genres 
 function genresShow(cardGenres){
     let genre = cardGenres.genres
     let genreactual =''
@@ -244,4 +243,26 @@ function genresShow(cardGenres){
         }
 }
 return `${genreactual}`;
+}
+
+
+// Modal event in the cards
+function clickEventCard(){
+    let modalCard = document.querySelectorAll(".card-interact-button")
+    if( modalOpen === false ) {
+        for (let t = 0; t < modalCard.length; t++){
+            modalCard[t].addEventListener("click", showModalEvent)
+        }
+    }
+
+    }
+function showModalEvent(){
+    let modal = document.getElementById("modal-back-sadow")
+    modal.style.display = "flex";
+    modal.addEventListener("click", closeModal)
+}
+
+function closeModal(){
+    let modal = document.getElementById("modal-back-sadow")
+    modal.style.display = "none";
 }
