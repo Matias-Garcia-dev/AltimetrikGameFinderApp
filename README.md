@@ -9,7 +9,6 @@ Example User in the ds.json:
     {
       "email": "admin@admin.com",
       "password": "example",
-      "id": 1
     }
     
  Open indes.html in Visual studio using Live server.
