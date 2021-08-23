@@ -11,7 +11,7 @@ Example User in the ds.json:
       "password": "example",
     }
     
- Open indes.html in Visual studio using Live server.
+ Open index.html in Visual studio using Live server.
  Login to get acces to the main.
  
  *****/ TO DO /*****
