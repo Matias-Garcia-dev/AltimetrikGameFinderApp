@@ -1,3 +1,4 @@
+
 How to run the project:
 
 Initialize the Json server npx json-server-auth db.json.
@@ -13,3 +14,28 @@ Connect the module with the API
 Implement search feature 
 Implement side bar interaction 
 Made the main screen responsive
+=======
+# AltimetrikGameFinderApp
+Starting with:
+* Initializing Json server 
+npx json-server-auth db.json 
+
+Example User in the ds.json: 
+
+"users": [
+    {
+      "email": "admin@admin.com",
+      "password": "example",
+    }
+    
+ Open index.html in Visual studio using Live server.
+ Login to get acces to the main.
+ 
+ *****/ TO DO /*****
+-Carusel in Login
+-Logout in Main 
+-complite de Data in the module with the API
+-Search interaction
+-Side bar interaction
+-responsive main
+
