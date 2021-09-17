@@ -9,12 +9,12 @@ Login to get access to the main screen with this example user in the ds.json:
 
 
 TODO:
- * Implement carusel in Login 
- * Implement logout in Main 
-Connect the module with the API
-Implement search feature 
-Implement side bar interaction 
-Made the main screen responsive
+- Implement carusel in Login 
+- Implement logout in Main 
+- Connect the module with the API
+- Implement search feature 
+- Implement side bar interaction 
+- Made the main screen responsive
 
 
 
