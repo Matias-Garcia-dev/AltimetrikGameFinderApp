@@ -1,4 +1,4 @@
-// cosntants declaration  
+// Main constants 
 const cardContainer = document.getElementById("card-grid-container");
 const apiKey = "912ff9d8e7e14450a9323db86c7eaecf";
 const url ="https://api.rawg.io/api/games";
@@ -15,14 +15,14 @@ const additionalHeader = {
 };
 const pagesCounter = 1; 
 
-// get the informtion from the api 
-callApi(urlKey, additionalHeader).then(resultApi =>{
+// Get the informtion from the api 
+getGamesInformation(urlKey, additionalHeader).then(resultApi =>{
     console.log(resultApi);
     cardsCreation(resultApi);
 
 })
 
-async function callApi(url, info){
+async function getGamesInformation(url, info){
     const result = await fetch(url,info);
     if (result.status === 200) {
         const apidata = await result.json();
@@ -34,7 +34,7 @@ async function callApi(url, info){
 }
 
 
-// start to create the cards
+// Create cards
 let createcard = ``;
 function cardsCreation(cardinfo){
     console.log(cardinfo)
@@ -59,7 +59,7 @@ function cardsCreation(cardinfo){
                                             <div class="line"></div>
                                             <div class="text-container">
                                                 <p class="text-grid">Genres</p>
-                                                <p class="text-grid">${genresShow(actualCard)}</p>
+                                                <p class="text-grid">${ShowGenres(actualCard)}</p>
                                             </div>
                                             <div class="line"></div>
                                         </div>
@@ -79,7 +79,7 @@ function cardsCreation(cardinfo){
     }
 }
 
-// platforms icons in the card
+// Platforms icons in the card
 function platformSelector(cardicons){
     let platformSelected = '';
     if (!!cardicons.parent_platforms) {
@@ -225,7 +225,7 @@ function platformSelector(cardicons){
     return platformSelected;
 }
 
-// cards release date
+// Cards release date
 function dateRelease(date){
    const actualDate = (new Date(date.released)).toString().split(' ');
    //console.log(actualDate)
@@ -233,7 +233,7 @@ function dateRelease(date){
 }
 
  // Cards genres 
-function genresShow(cardGenres){
+function ShowGenres(cardGenres){
     let genre = cardGenres.genres
     let genreactual =''
     for (let x = 0; x < genre.length; x++) {
