@@ -89,7 +89,7 @@ async function UserServer(email, password){
         })
 }
 
-// show and hide password 
+// Show and hide password 
 function showHidePassword() {
     const textpass = document.getElementById("password");
     if (textpass.type === "password") {
