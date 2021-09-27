@@ -29,7 +29,7 @@ async function getGamesInformation(url, info){
         return apidata;
     }
     else {
-        console.log("fail");
+        console.log("failed to get the information of the games");
     }
 }
 
@@ -37,11 +37,10 @@ async function getGamesInformation(url, info){
 // Create cards
 let createcard = ``;
 function cardsCreation(cardinfo){
-    console.log(cardinfo)
     for( let k = 0; k< cardinfo.results.length; k++){
         let actualCard = cardinfo.results[k]
-        createcard = `<li class='cards-style' id="${actualCard.id}">
-        <button class='card-interact-button'>
+        createcard = `<li class='cards-style'>
+        <button class='card-interact-button' onclick=showModalEvent(${actualCard.id})>
             <div class='image-card-container'>
                 <img class='image-card' src='${actualCard.background_image}' alt='games'>
             </div>
@@ -59,7 +58,7 @@ function cardsCreation(cardinfo){
                                             <div class="line"></div>
                                             <div class="text-container">
                                                 <p class="text-grid">Genres</p>
-                                                <p class="text-grid">${showGenres(actualCard)}</p>
+                                                <p class="text-grid" id="genres">${showGenres(actualCard)}</p>
                                             </div>
                                             <div class="line"></div>
                                         </div>
@@ -75,7 +74,6 @@ function cardsCreation(cardinfo){
         </button>
         </li>`;
         document.querySelector("#card-grid-container").innerHTML += createcard;
-        clickEventCard()
     }
 }
 
@@ -255,16 +253,46 @@ return `${genreactual}`;
 
 
 // Modal event in the cards
-function clickEventCard(){
-    let modalCard = document.querySelectorAll(".card-interact-button")
-    if( modalOpen === false ) {
-        for (let t = 0; t < modalCard.length; t++){
-            modalCard[t].addEventListener("click", showModalEvent)
+async function showModalEvent(id){
+    console.log(id)
+    let modaltitle;
+    let modalimg;
+    let modalreleasedate;
+    let modalgenres = "";
+    let modalplatforms = [];
+    let modaldescription;
+    let rank;
+    const modalinfo = await getInfoWithID(id)
+    const ingamepics = await gamePicsFromTheApi(modalinfo.slug); 
+    
+    let cardallinfo = document.querySelectorAll(".card-interact-button");
+    for(let f=0; f < cardallinfo.length; f++){
+        if(cardallinfo[f].getAttribute("onclick") === `showModalEvent(${id})`){
+            // Title
+            modaltitle = cardallinfo[f].querySelector(".game-title").textContent;
+            // backgound img
+            modalimg = cardallinfo[f].querySelector(".image-card-container").getElementsByTagName("img")[0].currentSrc;
+            //release date
+            modalreleasedate = cardallinfo[f].querySelector(".date").textContent;
+            //genres
+            modalgenres = cardallinfo[f].querySelector("#genres").textContent;
+            //platmfoms
+            modalplatforms.push(cardallinfo[f].querySelector(".plataforms-icons").innerHTML);
+            modaldescription = await descrition(id)
+            rank = cardallinfo[f].querySelector(".number-game").textContent;
         }
     }
-
-    }
-function showModalEvent(){
+    document.querySelector(".game-picture").setAttribute("src", `${ingamepics[0]}`)
+    document.querySelector("#picture-n1").setAttribute("src", `${ingamepics[1]}`)
+    document.querySelector("#picture-n2").setAttribute("src", `${ingamepics[2]}`)
+    document.querySelector("#picture-n3").setAttribute("src", `${ingamepics[3]}`)
+    document.querySelector("#picture-n4").setAttribute("src", `${ingamepics[4]}`)
+    document.querySelector(".modal-icons").innerHTML = modalplatforms
+    document.querySelector(".modal-img").setAttribute("src", `${modalimg}`);
+    document.querySelector(".modal-title").textContent = modaltitle;
+    document.querySelector("#modal-date").textContent = modalreleasedate;
+    document.querySelector("#modal-rank").textContent = `${rank}`
+    document.querySelector(".modal-description-text").innerHTML = modaldescription; 
     let modal = document.getElementById("modal-back-sadow")
     modal.style.display = "flex";
     modal.addEventListener("click", closeModal)
@@ -273,4 +301,26 @@ function showModalEvent(){
 function closeModal(){
     let modal = document.getElementById("modal-back-sadow")
     modal.style.display = "none";
+}
+
+async function descrition(id){
+    const gameCompleteDescription = await getInfoWithID(id);
+    return gameCompleteDescription.description;
+}
+
+async function getInfoWithID(gameId) {
+    const fetchdata = await fetch(`https://api.rawg.io/api/games/${gameId}?key=${apiKey}`);
+    let dataDescrition = await fetchdata.json();
+    return dataDescrition;
+}
+
+async function gamePicsFromTheApi(slug){
+    const fetchdata = await fetch(`https://api.rawg.io/api/games/${slug}/screenshots?key=${apiKey}`);
+    let slugdata = await fetchdata.json();
+    console.log(slugdata)
+    let gamepictures = [];
+    for (let x = 0; x < 5; x ++) {
+        gamepictures.push(slugdata.results[x].image);
+    }
+    return gamepictures
 }

@@ -4,6 +4,7 @@ const password = document.getElementById('pasword');
 document.getElementById('useremail').addEventListener("click", EventRemoveUser);
 document.getElementById('password').addEventListener("click", EventRemovePass);
 
+carouselTimer()
 
 // Remove pass and email
 function EventRemoveUser() {
@@ -20,11 +21,9 @@ form.addEventListener('submit', (e) => {
   const pass = document.getElementById('password').value; 
  
   if (validateEmail(email) && validatePassword(pass)) {
-    //console.log("lo hice!")
     let loginserver = UserServer(email, pass);
 
     if(loginserver === "error"){
-      //console.log("no lo hize")
       document.getElementById('error').style.display='flex';
       document.getElementById('error-pass').style.display='flex';
     }
@@ -35,7 +34,6 @@ form.addEventListener('submit', (e) => {
 
   }
   else {
-    //console.log("no lo hize")
     document.getElementById('error').style.display='flex';
     document.getElementById('error-pass').style.display='flex';
   }
@@ -98,3 +96,58 @@ function showHidePassword() {
       textpass.type = "password";
     }
   }
+
+  function carouselTimer(){
+   const track = document.querySelector(".carousel-truck")
+   const slides = Array.from(track.children)
+   const dotsNav = document.querySelector(".carousel-dot-container")
+   const dots = Array.from(dotsNav.children)
+   const slideWidth = slides[0].getBoundingClientRect().width
+   const img = document.querySelector(".carousel-truck")
+
+   const setSlidePostion = (slides, index) => {
+     slides.style.left = slideWidth * index + 'px';
+   };
+   slides.forEach(setSlidePostion)
+
+   const movetoSlide = (track, currentSlide, targetSlide) => {
+    track.style.transform ='translateX(-' + targetSlide.style.left + ')';
+    if(currentSlide.classList != null ) {currentSlide.classList.remove('current-slide');}
+    targetSlide.classList.add('current-slide')
+   }
+
+   /* const updateDots = () =>{
+     currentDot.classList.remove('current-slide');
+     targetDot.classList.add('current-slide');
+   } */
+
+   img.addEventListener('click', e =>{
+     let currentSlide = track.querySelector('.current-slide')
+     let nextSlide = currentSlide.nextElementSibling;
+     const startSlide = track.querySelector('#carousel-welcome-image')
+     const currentDot = dotsNav.querySelector('.current-slide')
+     const nextDot = currentDot.nextElementSibling;
+     if( nextSlide == null){
+       startSlide.classList.add('current-slide')
+     }
+     else{
+      movetoSlide(track, currentSlide, nextSlide)
+      /* updateDots(currentDot, nextDot) */
+     }
+    });
+
+    dotsNav.addEventListener('click', e =>{
+       const targetDot = e.target.closest('input')
+       if (!targetDot) return;
+       const currentSlide = track.querySelector('.current-slide');
+       const currentDot = dotsNav.querySelector('.current-slide');
+       const targetIndex = dots.findIndex(dot => dot == targetDot)
+       const targetSlide = slides[targetIndex]
+       
+       movetoSlide(track, currentSlide, targetSlide);
+       /* updateDots(currentDot, targetDot); */
+       currentDot.classList.remove('current-slide');
+      targetDot.classList.add('current-slide');
+    })
+
+  };
