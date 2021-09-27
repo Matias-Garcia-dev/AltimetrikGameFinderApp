@@ -24,7 +24,7 @@
                 <form action="index.js"method="GET">
                     <div class="box-login">
                         <div class="icon">
-                            <img src="style/image-icons/user.png" class="user-circle" alt="carusel image">
+                            <img src="style/image-icons/user.png" class="user-circle" alt="login-icon">
                         </div>
                         <input type="text" class="useremail" name="useremail" id="useremail"
                             placeholder="Email" aria-label="Username or email" form autocomplete="off" >
@@ -32,7 +32,7 @@
                     <p class="error" id="error">Enter a valid Email</p>
                     <div class="box-login">
                         <div class="icon">
-                            <img src="style/image-icons/key.png" class="user-circle key" alt="carusel image">
+                            <img src="style/image-icons/key.png" class="user-circle key" alt="login-icon">
                         </div>
                         <input type="password" class="password-input" name="password" id="password" placeholder="Password"
                             aria-label="Password">
@@ -69,9 +69,26 @@
                         <button class="button google">LOGIN WITH GOOGLE</button></div>
                 </div>
             </div>
-            <!--container end-->
-            <div class="image-box">
-                <img src="style/image-icons/biomutant.png" class="image" alt="carusel image">
+            <!--carousel-->
+            <div class="carousel-image-box">
+                <div class="carousel-truck">
+                    <img src="style/image-icons/biomutant.png" class="image current-slide" alt="Biomutant" id="carousel-welcome-image">
+                    <img src="style/image-icons/back4blood.jpg" class="image" alt="back4blood">
+                    <img src="style/image-icons/dead-island2.png" class="image" alt="dead-island2">
+                    <img src="style/image-icons/elder-ring.jpg" class="image" alt="elder-ring">
+                    <img src="style/image-icons/metrid.jpg" class="image" alt="metrid">
+                    <img src="style/image-icons/psychonauts2.jpg" class="image" alt="psychonauts2">
+                    <img src="style/image-icons/tunic.jpg" class="image" alt="tunic">
+                </div>
+                <div class="carousel-dot-container">
+                    <input type="radio" name="carousel-dot" class="carousel-dot current-slide">
+                    <input type="radio" name="carousel-dot" class="carousel-dot">
+                    <input type="radio" name="carousel-dot" class="carousel-dot" >
+                    <input type="radio" name="carousel-dot" class="carousel-dot" >
+                    <input type="radio" name="carousel-dot" class="carousel-dot" >
+                    <input type="radio" name="carousel-dot" class="carousel-dot" >
+                    <input type="radio" name="carousel-dot" class="carousel-dot" >
+                </div>
             </div>
         </div>
         <!--main end-->
