@@ -156,8 +156,16 @@ a {
 }
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  grid-template-rows: 314px 314px 314px;
   gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(363px, 1fr));
+}
+.one-column-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
 }
 .cards-style {
   background: #303030;
@@ -172,16 +180,14 @@ a {
   background-color: transparent;
   border: none;
 }
-.image-card-container {
-  height: 217.3px;
-  width: 363px;
-}
+
 .image-card {
   border-radius: 10px 10px 0px 0px;
   height: 204.25px;
   width: 100%;
 }
 .game-title {
+  margin-top: 9.75px;
   text-align: left;
   width: 220px;
   color: #ffffff;
@@ -191,6 +197,18 @@ a {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.game-title-column {
+  margin-top: 9.75px;
+  text-align: left;
+  width: 220px;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 23px;
+  line-height: 31px;
+  white-space: nowrap;
+  overflow: "";
+  text-overflow: "";
 }
 .bottom-info-card {
   margin-left: 20px;
@@ -483,4 +501,27 @@ a {
 .game-picture {
   width: 100%;
   height: 100%;
+}
+.button-grid:hover {
+  color: #7d7d7d;
+}
+/*  css columns */
+
+.column-bottum-interaction-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+}
+.description-column {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: white;
+  width: 89.5%;
+  margin-left: 20px;
+  margin-right: 20px;
 }

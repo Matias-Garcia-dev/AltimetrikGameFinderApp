@@ -16,9 +16,11 @@ const additionalHeader = {
 const pagesCounter = 1; 
 
 // Get the informtion from the api 
-getGamesInformation(urlKey, additionalHeader).then(resultApi =>{
+getGamesInformation(urlKey).then(resultApi =>{
     console.log(resultApi);
     cardsCreation(resultApi);
+    changeColumnsButton(resultApi);
+
 
 })
 
@@ -40,27 +42,29 @@ function cardsCreation(cardinfo){
     for( let k = 0; k< cardinfo.results.length; k++){
         let actualCard = cardinfo.results[k]
         createcard = `<li class='cards-style'>
-        <button class='card-interact-button' onclick=showModalEvent(${actualCard.id})>
-            <div class='image-card-container'>
-                <img class='image-card' src='${actualCard.background_image}' alt='games'>
-            </div>
+        <button class='card-interact-button' id='button' onclick=showModalEvent(${actualCard.id})>
+            <img class='image-card' src='${actualCard.background_image}' alt='games'>
             <div class="bottom-info-card">
                                     <div class="title-plataform-container">
-                                        <p class="game-title">${actualCard.name}</p>
+                                        <p class="game-title" id="title">${actualCard.name}</p>
                                         <div class="plataforms-icons">${platformSelector(actualCard)}</div>
                                     </div>
                                     <div class="date-gif">
                                         <div class="date-container">
+                                            <div>
                                             <div class="text-container">
                                                 <p class="release text-grid">Release date</p>
                                                 <p class="date text-grid">${dateRelease(actualCard)}</p>
                                             </div>
                                             <div class="line"></div>
+                                            </div>
+                                            <div>
                                             <div class="text-container">
                                                 <p class="text-grid">Genres</p>
                                                 <p class="text-grid" id="genres">${showGenres(actualCard)}</p>
                                             </div>
                                             <div class="line"></div>
+                                            </div>
                                         </div>
                                         <div class="number-gif">
                                             <p class="number-game">#${k+1}</p>
@@ -234,7 +238,7 @@ function platformSelector(cardicons){
 // Cards release date
 function dateRelease(date){
    const actualDate = (new Date(date.released)).toString().split(' ');
-   //console.log(actualDate)
+
    return `${actualDate[1]} ${actualDate[2]} ${actualDate[3]}`;
 }
 
@@ -271,14 +275,14 @@ async function showModalEvent(id){
             // Title
             modaltitle = cardallinfo[f].querySelector(".game-title").textContent;
             // backgound img
-            modalimg = cardallinfo[f].querySelector(".image-card-container").getElementsByTagName("img")[0].currentSrc;
+            modalimg = cardallinfo[f].querySelector(".image-card").currentSrc;
             //release date
             modalreleasedate = cardallinfo[f].querySelector(".date").textContent;
             //genres
             modalgenres = cardallinfo[f].querySelector("#genres").textContent;
             //platmfoms
             modalplatforms.push(cardallinfo[f].querySelector(".plataforms-icons").innerHTML);
-            modaldescription = await descrition(id)
+            modaldescription = await description(id)
             rank = cardallinfo[f].querySelector(".number-game").textContent;
         }
     }
@@ -302,18 +306,18 @@ function closeModal(){
     let modal = document.getElementById("modal-back-sadow")
     modal.style.display = "none";
 }
-
-async function descrition(id){
+// Modal description
+async function description(id){
     const gameCompleteDescription = await getInfoWithID(id);
     return gameCompleteDescription.description;
 }
-
+// Modal get information
 async function getInfoWithID(gameId) {
     const fetchdata = await fetch(`https://api.rawg.io/api/games/${gameId}?key=${apiKey}`);
-    let dataDescrition = await fetchdata.json();
-    return dataDescrition;
+    let datadescription = await fetchdata.json();
+    return datadescription;
 }
-
+// Modal screenshots 
 async function gamePicsFromTheApi(slug){
     const fetchdata = await fetch(`https://api.rawg.io/api/games/${slug}/screenshots?key=${apiKey}`);
     let slugdata = await fetchdata.json();
@@ -324,3 +328,85 @@ async function gamePicsFromTheApi(slug){
     }
     return gamepictures
 }
+
+
+// Change cards to columns
+function changeColumnsButton(cardsData){
+    const gridspace = document.querySelector(".grid-container")
+    const buttonChangetoColumns = document.querySelector(".button-column")
+    const buttonChangetoGrid = document.querySelector(".button-grid")
+    
+     buttonChangetoColumns.addEventListener('click', async e =>{
+        document.getElementById("card-grid-container").classList.remove("grid-container")
+        document.getElementById("card-grid-container").classList.add("one-column-container")
+        let cardStyle = document.querySelectorAll(".cards-style")
+        let cardbuttonbox = document.querySelectorAll("#button")
+        let imgcolumn = document.querySelectorAll(".image-card")
+        let columninfo = document.querySelectorAll(".bottom-info-card")
+        let titlecontainer = document.querySelectorAll(".title-plataform-container")
+        let title = document.querySelectorAll("#title")
+        let date = document.querySelectorAll(".date-container")
+        let rank = document.querySelectorAll(".number-gif")
+        let ranknumber = document.querySelectorAll(".number-game")
+        for(let i = 0; i< cardsData.results.length; i++){
+            const cardDescrition = cardsData.results[i]
+            cardStyle[i].style.width="80%";
+            cardStyle[i].style.height="538px";
+            cardbuttonbox[i].style.display="flex";
+            cardbuttonbox[i].style.alignItems="center";
+            imgcolumn[i].style.width="100%";
+            imgcolumn[i].style.height="315px";
+            columninfo[i].style.width="89.5%";
+            columninfo[i].style.padding="10px";
+            titlecontainer[i].style.height="50px";
+            title[i].style.overflow="";
+            title[i].style.textOverflow=""
+            date[i].style.display="flex";
+            date[i].style.marginTop="17px";
+            date[i].style.gap="40px";
+            rank[i].style.display="flex";
+            rank[i].style.marginTop="10px";
+            ranknumber[i].style.marginRight="60px";
+            ranknumber[i].style.paddingTop="10px";
+            let descriptioncolumn =`<div class="description-column">${ await description(cardDescrition.id)}</div>`;
+            cardbuttonbox[i].innerHTML += descriptioncolumn
+        }
+        
+    })
+    buttonChangetoGrid.addEventListener('click', async e =>{
+        document.getElementById("card-grid-container").classList.remove("one-column-container")
+        document.getElementById("card-grid-container").classList.add("grid-container")
+        let cardStyle = document.querySelectorAll(".cards-style")
+        let cardbuttonbox = document.querySelectorAll("#button")
+        let imgcolumn = document.querySelectorAll(".image-card")
+        let columninfo = document.querySelectorAll(".bottom-info-card")
+        let titlecontainer = document.querySelectorAll(".title-plataform-container")
+        let title = document.querySelectorAll("#title")
+        let date = document.querySelectorAll(".date-container")
+        let rank =document.querySelectorAll(".number-gif")
+        let ranknumber = document.querySelectorAll(".number-game")
+         let cardDescription = document.querySelectorAll(".description-column")
+        for(let i = 0; i< cardsData.results.length; i++){
+            cardStyle[i].style.width="363px";
+            cardStyle[i].style.height="314px";
+            cardbuttonbox[i].style.display="auto";
+            cardbuttonbox[i].style.alignItems="";
+            imgcolumn[i].style.width="363px";
+            imgcolumn[i].style.height="217.3px";
+            columninfo[i].style.width="auto";
+            columninfo[i].style.padding="";
+            titlecontainer[i].style.height="23px"
+            title[i].style.overflow="hidden";
+            title[i].style.textOverflow="ellipsis";
+            date[i].style.display="";
+            date[i].style.marginTop="0"
+            date[i].style.gap="";
+            rank[i].style.display="";
+            rank[i].style.marginTop=""
+            ranknumber[i].style.marginRight="";
+            ranknumber[i].style.paddingTop="";
+            cardDescription[i].remove();
+        }
+        
+    })
+} 
