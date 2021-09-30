@@ -4,7 +4,7 @@ const password = document.getElementById('pasword');
 document.getElementById('useremail').addEventListener("click", EventRemoveUser);
 document.getElementById('password').addEventListener("click", EventRemovePass);
 
-carouselTimer()
+carouselInteractionfunction()
 
 // Remove pass and email
 function EventRemoveUser() {
@@ -96,8 +96,8 @@ function showHidePassword() {
       textpass.type = "password";
     }
   }
-
-  function carouselTimer(){
+// caroulsel interaction  ( no time, only click )
+  function carouselInteractionfunction(){
    const track = document.querySelector(".carousel-truck")
    const slides = Array.from(track.children)
    const dotsNav = document.querySelector(".carousel-dot-container")
