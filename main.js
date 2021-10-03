@@ -4,7 +4,14 @@ const apiKey = "912ff9d8e7e14450a9323db86c7eaecf";
 const url ="https://api.rawg.io/api/games";
 const urlKey = `${url}?key=${apiKey}`;
 const main = document.getElementById("main");
-const modalOpen = false
+const modalOpen = false;
+var page;
+window.addEventListener("load", pageStarted);
+
+function pageStarted (){
+    document.querySelector(".icon_search").addEventListener("click", searchGame);
+}
+
 const additionalHeader = {
     method: "GET",
     headers: {
@@ -258,7 +265,6 @@ return `${genreactual}`;
 
 // Modal event in the cards
 async function showModalEvent(id){
-    console.log(id)
     let modaltitle;
     let modalimg;
     let modalreleasedate;
@@ -267,8 +273,8 @@ async function showModalEvent(id){
     let modaldescription;
     let rank;
     const modalinfo = await getInfoWithID(id)
-    const ingamepics = await gamePicsFromTheApi(modalinfo.slug); 
-    
+    const ingamepics = await gamePicsFromTheApi(modalinfo.slug);
+
     let cardallinfo = document.querySelectorAll(".card-interact-button");
     for(let f=0; f < cardallinfo.length; f++){
         if(cardallinfo[f].getAttribute("onclick") === `showModalEvent(${id})`){
@@ -295,16 +301,71 @@ async function showModalEvent(id){
     document.querySelector(".modal-img").setAttribute("src", `${modalimg}`);
     document.querySelector(".modal-title").textContent = modaltitle;
     document.querySelector("#modal-date").textContent = modalreleasedate;
+    document.querySelector(".release-modal").textContent = modalreleasedate;
     document.querySelector("#modal-rank").textContent = `${rank}`
-    document.querySelector(".modal-description-text").innerHTML = modaldescription; 
+    document.querySelector(".modal-description-text").innerHTML = modaldescription;
+
+    const plataformGames = getPlatforms(modalinfo.parent_platforms);
+    document.querySelector(".platformsModal").textContent = plataformGames; 
+    const  age = getAgerating(modalinfo.esrb_rating);
+    document.querySelector(".rating").textContent = age;
+    const publisher = getPublisher(modalinfo.publishers[0]);
+    document.querySelector(".publisher-modal").textContent = publisher;
+    const web = getWebsite(modalinfo.website);
+    document.querySelector(".website-modal").textContent = web;
+    const developer = getDeveloper(modalinfo.developers[0]);
+    document.querySelector(".dev-modal").textContent = developer;
+
+
+
     let modal = document.getElementById("modal-back-sadow")
     modal.style.display = "flex";
-    modal.addEventListener("click", closeModal)
-}
+    let exit = document.querySelector(".modal-out")
+    modal.addEventListener('click', closeModal)
+    }
 
-function closeModal(){
+ function closeModal(){
     let modal = document.getElementById("modal-back-sadow")
     modal.style.display = "none";
+} 
+// modal bottom info 
+// platforms in bottom
+function getPlatforms(platformsApi) {
+    if (platformsApi === null) {
+        return "No platform";
+    }
+    else {
+        let platformSelected
+        for ( let e = 0; e < platformsApi.length; e++) {
+            platformSelected += platformsApi[e].platform.name + ", ";
+        }
+        return platformSelected.substring(9, platformSelected.length -2);
+    }
+}
+// age rating
+function getAgerating(ageApi) {
+    if(ageApi === null){
+        return ageApi = "Nor Rated";
+    }
+    return ageApi.name
+}
+// Publisher
+function getPublisher(publisherApi) {
+    if (publisherApi == null) {
+        return publisherApi = "Not defined";
+    }
+    return publisherApi.name;
+} 
+// Website
+function getWebsite(webApi) {
+    if(webApi == "") {
+        return webApi = "No website";
+    }
+    return webApi
+}   
+// Developer
+function getDeveloper(devApi) {
+    return devApi.name;
 }
 // Modal description
 async function description(id){
@@ -321,21 +382,19 @@ async function getInfoWithID(gameId) {
 async function gamePicsFromTheApi(slug){
     const fetchdata = await fetch(`https://api.rawg.io/api/games/${slug}/screenshots?key=${apiKey}`);
     let slugdata = await fetchdata.json();
-    console.log(slugdata)
     let gamepictures = [];
     for (let x = 0; x < 5; x ++) {
         gamepictures.push(slugdata.results[x].image);
     }
     return gamepictures
 }
-
+window.addEventListener("load", changeColumnsButton);
 
 // Change cards to columns
 function changeColumnsButton(cardsData){
     const gridspace = document.querySelector(".grid-container")
     const buttonChangetoColumns = document.querySelector(".button-column")
     const buttonChangetoGrid = document.querySelector(".button-grid")
-    
      buttonChangetoColumns.addEventListener('click', async e =>{
         document.getElementById("card-grid-container").classList.remove("grid-container")
         document.getElementById("card-grid-container").classList.add("one-column-container")
@@ -407,6 +466,103 @@ function changeColumnsButton(cardsData){
             ranknumber[i].style.paddingTop="";
             cardDescription[i].remove();
         }
+        window.addEventListener('load', (event) => {
+            cardDescription.remove() = cardDescription.remove() + 'load\n';
+        })
         
     })
 } 
+
+// searching interaction
+function searchGame(){
+    
+    let searchinputText =document.getElementById("search-input").value;
+    applySearchresults(searchinputText)
+    function gridContainercards(){
+        document.getElementById("card-grid-container").classList.remove("one-column-container")
+        document.getElementById("card-grid-container").classList.add("grid-container")
+        let cardStyle = document.querySelectorAll(".cards-style")
+        let cardbuttonbox = document.querySelectorAll("#button")
+        let imgcolumn = document.querySelectorAll(".image-card")
+        let columninfo = document.querySelectorAll(".bottom-info-card")
+        let titlecontainer = document.querySelectorAll(".title-plataform-container")
+        let title = document.querySelectorAll("#title")
+        let date = document.querySelectorAll(".date-container")
+        let rank =document.querySelectorAll(".number-gif")
+        let ranknumber = document.querySelectorAll(".number-game")
+         let cardDescription = document.querySelectorAll(".description-column")
+        for(let i = 0; i< 20; i++){
+            cardStyle[i].style.width="363px";
+            cardStyle[i].style.height="314px";
+            cardbuttonbox[i].style.display="auto";
+            cardbuttonbox[i].style.alignItems="";
+            imgcolumn[i].style.width="363px";
+            imgcolumn[i].style.height="217.3px";
+            columninfo[i].style.width="auto";
+            columninfo[i].style.padding="";
+            titlecontainer[i].style.height="23px"
+            title[i].style.overflow="hidden";
+            title[i].style.textOverflow="ellipsis";
+            date[i].style.display="";
+            date[i].style.marginTop="0"
+            date[i].style.gap="";
+            rank[i].style.display="";
+            rank[i].style.marginTop=""
+            ranknumber[i].style.marginRight="";
+            ranknumber[i].style.paddingTop="";
+            cardDescription[i].remove();
+        }
+    }
+    
+}
+
+async function applySearchresults(searchInput) {
+    const fetchSearchApi = await fetch(`${urlKey}&search=${searchInput}`)
+    const dataSearched = await fetchSearchApi.json();
+    page = dataSearched.next;
+    document.getElementById("new-trend").innerHTML = "Search Result";
+    document.querySelector(".subtitle-card-grid").innerHTML = "'"+ searchInput +"' Results ";
+    document.querySelector(".grid-container").innerHTML = "";
+    for ( let e = 0 ; e<dataSearched.results.length; e++){
+        let dataResults = dataSearched.results[e];
+        let createcard = ``;
+        createcard = `<li class='cards-style'>
+        <button class='card-interact-button' id='button' onclick=showModalEvent(${dataResults.id})>
+            <img class='image-card' src='${dataResults.background_image}' alt='games'>
+            <div class="bottom-info-card">
+                                    <div class="title-plataform-container">
+                                        <p class="game-title" id="title">${dataResults.name}</p>
+                                        <div class="plataforms-icons">${platformSelector(dataResults)}</div>
+                                    </div>
+                                    <div class="date-gif">
+                                        <div class="date-container">
+                                            <div>
+                                            <div class="text-container">
+                                                <p class="release text-grid">Release date</p>
+                                                <p class="date text-grid">${dateRelease(dataResults)}</p>
+                                            </div>
+                                            <div class="line"></div>
+                                            </div>
+                                            <div>
+                                            <div class="text-container">
+                                                <p class="text-grid">Genres</p>
+                                                <p class="text-grid" id="genres">${showGenres(dataResults)}</p>
+                                            </div>
+                                            <div class="line"></div>
+                                            </div>
+                                        </div>
+                                        <div class="number-gif">
+                                            <p class="number-game">#${e+1}</p>
+                                            <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
+                                                </svg>
+                                                </div>
+                                        </div>
+                                    </div>
+                        </div>
+        </button>
+        </li>`;
+        document.querySelector("#card-grid-container").innerHTML += createcard;
+        console.log(dataResults)
+    }
+}
