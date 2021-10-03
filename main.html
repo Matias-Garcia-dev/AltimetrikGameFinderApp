@@ -17,7 +17,7 @@
                     <div class="icon">
                         <img src="style/image-icons/search.png" class="icon_search" alt="">
                     </div>
-                    <input type="text" class="search" id="search" placeholder="Type game name or the console">
+                    <input type="text" class="search" id="search-input" placeholder="Type game name or the console">
                 </div>
                 <form>
                     <div class="logout-container">
@@ -66,7 +66,7 @@
                 <div class="header-cards-container">
                     <div>
                         <h1 class="weight-strong-text" id="new-trend">New and trending</h1>
-                        <p class="head-cards">Based on player counts and realease date</p>
+                        <p class="head-cards subtitle-card-grid">Based on player counts and realease date</p>
                     </div>
                     <div class="icon-head-cards">
                         <svg id="space-between-icons-head-cards" class="button-grid" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -188,7 +188,7 @@
                             <div class="aditional-info-grid">
                                 <div>
                                     <p class="aditional-info-text">Plattforms</p>
-                                    <a class="aditional-info-link">PlayStation5,PC,Xbox One</a>
+                                    <a class="aditional-info-link platformsModal">PlayStation5,PC,Xbox One</a>
                                 </div>
                                 <div>
                                     <p  class="aditional-info-text">Genre</p>
@@ -196,31 +196,33 @@
                                 </div>
                                 <div>
                                     <p  class="aditional-info-text">Release date</p>
-                                    <a href="" class="aditional-info-link no-line">May 25, 2021</a>
+                                    <a href="" class="aditional-info-link no-line release-modal">May 25, 2021</a>
                                 </div>
                                 <div>
                                     <p  class="aditional-info-text">Developer</p>
-                                    <a href=""  class="aditional-info-link">Experiment 101</a>
+                                    <a href=""  class="aditional-info-link dev-modal">Experiment 101</a>
                                 </div>
                                 <div>
                                     <p  class="aditional-info-text">Publisher</p>
-                                    <a href="" class="aditional-info-link">THQ Nordic</a>
+                                    <a href="" class="aditional-info-link publisher-modal">THQ Nordic</a>
                                 </div>
                                 <div>
                                     <p  class="aditional-info-text">Age rating</p>
-                                    <a href="" class="aditional-info-link no-line">Not rated</a>
+                                    <a href="" class="aditional-info-link no-line rating">Not rated</a>
                                 </div>
                                 <div>
                                     <p  class="aditional-info-text">Website</p>
-                                    <a href="" class="aditional-info-link">https://biomutant.com</a>
+                                    <a href="" class="aditional-info-link website-modal">https://biomutant.com</a>
                                 </div>
                             </div>
+
                             
                         </div>              
                     </div>
                 </div>
             </div>
         </div>
+        <div class="modal-out" id="out"></div>
         <script src="main.js" type="text/javascript"></script>
     </body>
 </html>
