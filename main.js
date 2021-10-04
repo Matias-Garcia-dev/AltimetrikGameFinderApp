@@ -10,6 +10,18 @@ window.addEventListener("load", pageStarted);
 
 function pageStarted (){
     document.querySelector(".icon_search").addEventListener("click", searchGame);
+    document.querySelector("#home").addEventListener("click", e =>{
+        e.preventDefault()
+        homeGame()
+     })
+    document.querySelector(".week").addEventListener("click", e =>{
+        e.preventDefault()
+        thisWeek()
+     })
+    document.querySelector(".month").addEventListener("click", e =>{
+        e.preventDefault()
+        thisMonth()
+    })
 }
 
 const additionalHeader = {
@@ -383,10 +395,12 @@ async function gamePicsFromTheApi(slug){
     const fetchdata = await fetch(`https://api.rawg.io/api/games/${slug}/screenshots?key=${apiKey}`);
     let slugdata = await fetchdata.json();
     let gamepictures = [];
-    for (let x = 0; x < 5; x ++) {
+    for (let x = 0; x < slugdata.results.length; x ++) {
         gamepictures.push(slugdata.results[x].image);
     }
     return gamepictures
+    
+   
 }
 window.addEventListener("load", changeColumnsButton);
 
@@ -521,7 +535,7 @@ async function applySearchresults(searchInput) {
     const dataSearched = await fetchSearchApi.json();
     page = dataSearched.next;
     document.getElementById("new-trend").innerHTML = "Search Result";
-    document.querySelector(".subtitle-card-grid").innerHTML = "'"+ searchInput +"' Results ";
+    document.querySelector(".subtitle-card-grid").innerHTML = `"${searchInput}" Results`;
     document.querySelector(".grid-container").innerHTML = "";
     for ( let e = 0 ; e<dataSearched.results.length; e++){
         let dataResults = dataSearched.results[e];
@@ -563,6 +577,134 @@ async function applySearchresults(searchInput) {
         </button>
         </li>`;
         document.querySelector("#card-grid-container").innerHTML += createcard;
-        console.log(dataResults)
+        
     }
+}
+
+async function homeGame() {
+    const fetchHomeApi = await fetch(`${urlKey}`);
+    const dataHome = await fetchHomeApi.json();
+    page = dataHome.next;
+    document.getElementById("new-trend").innerHTML = "New and trending"
+    document.querySelector(".subtitle-card-grid").innerHTML = "Based on player counts and realease date"
+    document.querySelector(".grid-container").innerHTML = "";
+    for ( let e = 0 ; e<dataHome.results.length; e++) {
+        let dataResults = dataHome.results[e];
+        let createcard = ``;
+        createcard = `<li class='cards-style'>
+        <button class='card-interact-button' id='button' onclick=showModalEvent(${dataResults.id})>
+            <img class='image-card' src='${dataResults.background_image}' alt='games'>
+            <div class="bottom-info-card">
+                                    <div class="title-plataform-container">
+                                        <p class="game-title" id="title">${dataResults.name}</p>
+                                        <div class="plataforms-icons">${platformSelector(dataResults)}</div>
+                                    </div>
+                                    <div class="date-gif">
+                                        <div class="date-container">
+                                            <div>
+                                            <div class="text-container">
+                                                <p class="release text-grid">Release date</p>
+                                                <p class="date text-grid">${dateRelease(dataResults)}</p>
+                                            </div>
+                                            <div class="line"></div>
+                                            </div>
+                                            <div>
+                                            <div class="text-container">
+                                                <p class="text-grid">Genres</p>
+                                                <p class="text-grid" id="genres">${showGenres(dataResults)}</p>
+                                            </div>
+                                            <div class="line"></div>
+                                            </div>
+                                        </div>
+                                        <div class="number-gif">
+                                            <p class="number-game">#${e+1}</p>
+                                            <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
+                                                </svg>
+                                                </div>
+                                        </div>
+                                    </div>
+                        </div>
+        </button>
+        </li>`;
+        document.querySelector("#card-grid-container").innerHTML += createcard;
+    }
+
+}
+
+async function thisWeek() {
+  let lastweekDate = lastweek();
+  let todayDate = thisDay();
+  const fetchLastweek = await fetch(`${urlKey}&dates=${lastweekDate},${todayDate}`)
+  const dataweek = await fetchLastweek.json()
+  page = dataweek.next;
+  document.getElementById("new-trend").innerHTML = "This Week";
+  document.querySelector(".subtitle-card-grid").innerHTML = `Games lunched in this week`;
+  document.querySelector(".grid-container").innerHTML = "";
+  for ( let e = 0 ; e<dataweek.results.length; e++){
+    let dataResults = dataweek.results[e];
+    let createcard = ``;
+    createcard = `<li class='cards-style'>
+    <button class='card-interact-button' id='button' onclick=showModalEvent(${dataResults.id})>
+        <img class='image-card' src='${dataResults.background_image}' alt='games'>
+        <div class="bottom-info-card">
+                                <div class="title-plataform-container">
+                                    <p class="game-title" id="title">${dataResults.name}</p>
+                                    <div class="plataforms-icons">${platformSelector(dataResults)}</div>
+                                </div>
+                                <div class="date-gif">
+                                    <div class="date-container">
+                                        <div>
+                                        <div class="text-container">
+                                            <p class="release text-grid">Release date</p>
+                                            <p class="date text-grid">${dateRelease(dataResults)}</p>
+                                        </div>
+                                        <div class="line"></div>
+                                        </div>
+                                        <div>
+                                        <div class="text-container">
+                                            <p class="text-grid">Genres</p>
+                                            <p class="text-grid" id="genres">${showGenres(dataResults)}</p>
+                                        </div>
+                                        <div class="line"></div>
+                                        </div>
+                                    </div>
+                                    <div class="number-gif">
+                                        <p class="number-game">#${e+1}</p>
+                                        <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
+                                            </svg>
+                                            </div>
+                                    </div>
+                                </div>
+                    </div>
+    </button>
+    </li>`;
+    document.querySelector("#card-grid-container").innerHTML += createcard;
+    
+}
+
+
+}
+
+
+async function thisMonth() {
+console.log("test")
+}
+function lastweek() {
+    var today = new Date();
+    var lastweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()-7);
+    var day = String(lastweek.getDate()).padStart(2, '0');
+    var month = String(lastweek.getMonth()+1).padStart(2, '0');
+    var year = lastweek.getFullYear();
+    let lastweekstring = year + '-' + month + '-' + day;
+    return lastweekstring;
+}
+function thisDay() {
+    var today = new Date();
+    var day = String(today.getDate()).padStart(2, '0');
+    var month = String(today.getMonth()+1).padStart(2, '0');
+    var year = today.getFullYear();
+    let todayString = year + '-' + month + '-' + day;
+    return todayString;
 }
