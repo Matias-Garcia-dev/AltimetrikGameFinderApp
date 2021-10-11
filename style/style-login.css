@@ -103,6 +103,7 @@ strong {
   color: #d1d1d1;
 }
 .eye {
+  cursor: pointer;
   width: 20px;
   height: 13.75px;
 }
@@ -147,6 +148,7 @@ strong {
   border-color: #ffffff;
 }
 .check {
+  cursor: pointer;
   margin: 0px 10px 0px -5px;
   margin-bottom: -5px;
   -webkit-appearance: none;
@@ -231,6 +233,7 @@ input[type="checkbox"]:checked {
 }
 
 .button {
+  cursor: pointer;
   height: 40px;
   padding: 10px;
   border-radius: 8px;
@@ -292,9 +295,6 @@ i {
   height: 100%;
   transition: transform 250ms ease-in;
 }
-.current-slide {
-  opacity: 1;
-}
 
 .carousel-dot-container {
   display: flex;
@@ -310,11 +310,17 @@ i {
   height: 7px;
   opacity: 0.3;
 }
+.current-slide {
+  opacity: 1;
+}
 .carousel-dot:hover {
   opacity: 1;
 }
 .dot-checked,
 .carousel-dot:checked {
+  opacity: 1;
+}
+.checked {
   opacity: 1;
 }
 
