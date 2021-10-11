@@ -1,93 +1,116 @@
-// Main constants 
+// Main constants
 const cardContainer = document.getElementById("card-grid-container");
 const apiKey = "912ff9d8e7e14450a9323db86c7eaecf";
-const url ="https://api.rawg.io/api/games";
+const url = "https://api.rawg.io/api/games";
 const urlKey = `${url}?key=${apiKey}`;
 const main = document.getElementById("main");
 const modalOpen = false;
+let singleColumnGrid = false;
 var page;
+var loadCardComplete = false;
+let loadpage = false;
 window.addEventListener("load", pageStarted);
 
-function pageStarted (){
-    document.querySelector(".icon_search").addEventListener("click", searchGame);
-    document.querySelector("#home").addEventListener("click", e =>{
-        e.preventDefault()
-        homeGame()
-     })
-    document.querySelector(".week").addEventListener("click", e =>{
-        e.preventDefault()
-        thisWeek()
-     })
-    document.querySelector(".month").addEventListener("click", e =>{
-        e.preventDefault()
-        thisMonth()
-    })
+function pageStarted() {
+  document.querySelector(".icon_search").addEventListener("click", searchGame);
+  document.getElementById("search-input").addEventListener("keyup", (e) => {
+    if (e.key === "Enter" || e.key === 13) {
+      searchGame();
+    }
+  });
+  document.querySelector("#home").addEventListener("click", (e) => {
+    e.preventDefault();
+    homeGame();
+  });
+  document.querySelector(".week").addEventListener("click", (e) => {
+    e.preventDefault();
+    thisWeek();
+  });
+  document.querySelector(".month").addEventListener("click", (e) => {
+    e.preventDefault();
+    thisMonth();
+  });
 }
 
 const additionalHeader = {
-    method: "GET",
-    headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "User-Agent":"Matias Garcia BFEDA"
-    }
+  method: "GET",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "Matias Garcia BFEDA",
+  },
 };
-const pagesCounter = 1; 
+const pagesCounter = 1;
 
-// Get the informtion from the api 
-getGamesInformation(urlKey).then(resultApi =>{
+// Get the informtion from the api
+document.querySelector(".loader-cards").style.display = "block";
+fetch(urlKey)
+  .then((res) => res.json())
+  .then((resultApi) => {
     console.log(resultApi);
     cardsCreation(resultApi);
     changeColumnsButton(resultApi);
+  })
+  .catch((error) => {
+    console.log("failed to get the information of the games");
+  });
 
-
-})
-
-async function getGamesInformation(url, info){
-    const result = await fetch(url,info);
-    if (result.status === 200) {
-        const apidata = await result.json();
-        return apidata;
-    }
-    else {
-        console.log("failed to get the information of the games");
-    }
+async function getGamesInformation(url, info) {
+  const result = await fetch(url, info);
+  if (result.status === 200) {
+    const apidata = await result.json();
+    return apidata;
+  } else {
+    console.log("failed to get the information of the games");
+  }
 }
-
 
 // Create cards
 let createcard = ``;
-function cardsCreation(cardinfo){
-    page = cardinfo.next;
-    for( let k = 0; k< cardinfo.results.length; k++){
-        let actualCard = cardinfo.results[k]
-        createcard = `<li class='cards-style'>
-        <button class='card-interact-button' id='button' onclick=showModalEvent(${actualCard.id})>
-            <img class='image-card' src='${actualCard.background_image}' alt='games'>
+function cardsCreation(cardinfo) {
+  page = cardinfo.next;
+  loadCardComplete = false;
+  for (let k = 0; k < cardinfo.results.length; k++) {
+    let actualCard = cardinfo.results[k];
+    createcard = `<li class='cards-style'>
+        <button class='card-interact-button' id='button' onclick=showModalEvent(${
+          actualCard.id
+        })>
+            <img class='image-card' src='${
+              actualCard.background_image
+            }' alt='games'>
             <div class="bottom-info-card">
                                     <div class="title-plataform-container">
-                                        <p class="game-title" id="title">${actualCard.name}</p>
-                                        <div class="plataforms-icons">${platformSelector(actualCard)}</div>
+                                        <p class="game-title" id="title">${
+                                          actualCard.name
+                                        }</p>
+                                        <div class="plataforms-icons">${platformSelector(
+                                          actualCard
+                                        )}</div>
                                     </div>
                                     <div class="date-gif">
                                         <div class="date-container">
                                             <div>
                                             <div class="text-container">
                                                 <p class="release text-grid">Release date</p>
-                                                <p class="date text-grid">${dateRelease(actualCard)}</p>
+                                                <p class="date text-grid">${dateRelease(
+                                                  actualCard
+                                                )}</p>
                                             </div>
                                             <div class="line"></div>
                                             </div>
                                             <div>
                                             <div class="text-container">
                                                 <p class="text-grid">Genres</p>
-                                                <p class="text-grid" id="genres">${showGenres(actualCard)}</p>
+                                                <p class="text-grid" id="genres">${showGenres(
+                                                  actualCard
+                                                )}</p>
                                             </div>
                                             <div class="line"></div>
                                             </div>
                                         </div>
                                         <div class="number-gif">
-                                            <p class="number-game">#${k+1}</p>
+                                            <p class="number-game">#${k + 1}</p>
                                             <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
                                                 </svg>
@@ -97,22 +120,24 @@ function cardsCreation(cardinfo){
                         </div>
         </button>
         </li>`;
-        document.querySelector("#card-grid-container").innerHTML += createcard;
-    }
+    document.querySelector("#card-grid-container").innerHTML += createcard;
+  }
+  loadCardComplete = true;
+  document.querySelector(".loader-cards").style.display = "none";
 }
 
 // Platforms icons in the card
-function platformSelector(cardicons){
-    let platformSelected = '';
-    if (!!cardicons.parent_platforms) {
-        for (let f = 0; f < cardicons.parent_platforms.length; f++) {
-            let platform = cardicons.parent_platforms[f].platform;
-            if (platform.slug.indexOf("ios") === 0 ) {
-                platformSelected += `<svg class="svg-space" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 18'><path fill='#FFF' d='M9.538 0H1.651C.896 0 .287.587.287 1.31v15.368c0 .723.61 1.31 1.364 1.31h7.887c.754 0 1.364-.587 1.364-1.31V1.31c0-.723-.61-1.31-1.364-1.31zm-5.89.796h3.894c.098 0 .178.14.178.315 0 .174-.08.316-.178.316H3.648c-.099 0-.177-.142-.177-.316 0-.174.078-.315.177-.315zm1.947 15.898c-.48 0-.87-.375-.87-.836 0-.462.39-.835.87-.835s.87.373.87.835c0 .461-.39.836-.87.836zM9.88 13.83H1.31V2.21h8.57v11.62z'/></svg>`;
-                continue;
-            }
-            if (platform.slug.indexOf("mac") === 0){
-                platformSelected += `<svg class="svg-space" width="15" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg"
+function platformSelector(cardicons) {
+  let platformSelected = "";
+  if (!!cardicons.parent_platforms) {
+    for (let f = 0; f < cardicons.parent_platforms.length; f++) {
+      let platform = cardicons.parent_platforms[f].platform;
+      if (platform.slug.indexOf("ios") === 0) {
+        platformSelected += `<svg class="svg-space" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 18'><path fill='#FFF' d='M9.538 0H1.651C.896 0 .287.587.287 1.31v15.368c0 .723.61 1.31 1.364 1.31h7.887c.754 0 1.364-.587 1.364-1.31V1.31c0-.723-.61-1.31-1.364-1.31zm-5.89.796h3.894c.098 0 .178.14.178.315 0 .174-.08.316-.178.316H3.648c-.099 0-.177-.142-.177-.316 0-.174.078-.315.177-.315zm1.947 15.898c-.48 0-.87-.375-.87-.836 0-.462.39-.835.87-.835s.87.373.87.835c0 .461-.39.836-.87.836zM9.88 13.83H1.31V2.21h8.57v11.62z'/></svg>`;
+        continue;
+      }
+      if (platform.slug.indexOf("mac") === 0) {
+        platformSelected += `<svg class="svg-space" width="15" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 viewBox="0 0 22.773 22.773" xml:space="preserve" fill="white">
                 <path d="M15.769,0c0.053,0,0.106,0,0.162,0c0.13,1.606-0.483,2.806-1.228,3.675c-0.731,0.863-1.732,1.7-3.351,1.573
@@ -124,39 +149,38 @@ function platformSelector(cardicons){
             c0.105-2.482,1.311-4.5,2.914-5.478c0.846-0.52,2.009-0.963,3.304-0.765c0.555,0.086,1.122,0.276,1.619,0.464
             c0.471,0.181,1.06,0.502,1.618,0.485c0.378-0.011,0.754-0.208,1.135-0.347c1.116-0.403,2.21-0.865,3.652-0.648
             c1.733,0.262,2.963,1.032,3.723,2.22c-1.466,0.933-2.625,2.339-2.427,4.74C17.818,14.688,19.086,15.964,20.67,16.716z" />
-            </svg>`
-            continue;
-            }
-            
-             if (platform.slug.indexOf("nintendo") === 0) {
-                platformSelected += `<svg class="svg-space" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+            </svg>`;
+        continue;
+      }
+
+      if (platform.slug.indexOf("nintendo") === 0) {
+        platformSelected += `<svg class="svg-space" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.67443 13H7.67506C7.62406 13 7.58325 12.9591 7.58325 12.908V0.081761C7.58325 0.0408805 7.61385 0 7.66486 0H9.67443C11.5106 0 12.9999 1.49214 12.9999 3.33176V9.66824C12.9999 11.5079 11.5106 13 9.67443 13ZM11.4596 7.15409C11.4596 6.42846 10.8679 5.83569 10.1437 5.83569C9.41941 5.83569 8.83796 6.42846 8.82776 7.15409C8.82776 7.87972 9.41941 8.47248 10.1437 8.47248C10.8679 8.47248 11.4596 7.87972 11.4596 7.15409Z" fill="white"/>
                 <path d="M2.16675 4.33333C2.16675 4.92917 2.65425 5.41667 3.25008 5.41667C3.84591 5.41667 4.33341 4.92917 4.33341 4.33333C4.33341 3.7375 3.84591 3.25 3.25008 3.25C2.64522 3.25 2.16675 3.72847 2.16675 4.33333Z" fill="white"/>
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M3.45677 0H6.40457C6.45759 0 6.5 0.0408805 6.5 0.0919811V12.908C6.5 12.9591 6.45759 13 6.40457 13H3.45677C1.54812 13 0 11.5079 0 9.66824V3.33176C0 1.49214 1.54812 0 3.45677 0ZM3.45677 11.9575H5.41843V1.04245H3.45677C2.82055 1.04245 2.22675 1.28774 1.7814 1.71698C1.32545 2.14623 1.08157 2.71855 1.08157 3.33176V9.66824C1.08157 10.2814 1.33605 10.8538 1.7814 11.283C2.22675 11.7225 2.82055 11.9575 3.45677 11.9575Z" fill="white"/>
                 </svg>
                 `;
-                continue;
-            } 
-            
-            if (platform.slug.indexOf("xbox") === 0) {
+        continue;
+      }
 
-                platformSelected += `<svg class="svg-space" width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
+      if (platform.slug.indexOf("xbox") === 0) {
+        platformSelected += `<svg class="svg-space" width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M6.5 0C7.75357 0 8.79048 0.40056 9.73452 1.07423C9.75 1.07423 9.75 1.09244 9.75 1.11064C9.75 1.12885 9.73452 1.12885 9.71905 1.12885C8.5119 0.819328 6.68571 2.03922 6.51548 2.16667H6.5H6.48452C6.31429 2.03922 4.4881 0.819328 3.28095 1.12885C3.26548 1.12885 3.25 1.12885 3.25 1.11064C3.25 1.09244 3.25 1.07423 3.26548 1.07423C4.20952 0.40056 5.24643 0 6.5 0ZM10.6537 11.4392C11.6287 10.4302 8.40504 6.86712 6.5023 5.41667C6.5023 5.41667 6.48658 5.41667 6.48658 5.43243C4.59957 6.86712 1.3602 10.4302 2.35088 11.4392C3.45164 12.4167 4.91407 13 6.5023 13C8.09054 13 9.53724 12.4167 10.6537 11.4392ZM1.78082 2.19751C1.7734 2.19751 1.76969 2.20158 1.76598 2.20566C1.76227 2.20973 1.75856 2.2138 1.75114 2.2138C0.667808 3.40327 0 5.04896 0 6.8576C0 8.34035 0.460046 9.72534 1.21689 10.817C1.21689 10.8333 1.23174 10.8333 1.24658 10.8333C1.26142 10.8333 1.26142 10.817 1.24658 10.8007C0.78653 9.25282 3.11644 5.52149 4.31849 3.95726L4.33333 3.94097C4.33333 3.93257 4.33333 3.9285 4.3313 3.92653C4.32939 3.92467 4.32568 3.92467 4.31849 3.92467C2.49315 1.93681 1.8847 2.14863 1.78082 2.19751ZM8.66667 3.93424L8.68151 3.91793C10.5068 1.94443 11.1153 2.15646 11.2043 2.18908C11.2105 2.18908 11.2141 2.18908 11.2173 2.19025C11.2217 2.1919 11.2253 2.19586 11.234 2.20539C12.3322 3.39602 13 5.04332 13 6.85372C13 8.33792 12.54 9.72426 11.7831 10.817C11.7831 10.8333 11.7683 10.8333 11.7534 10.8333V10.8007C12.1986 9.25127 9.88356 5.5163 8.68151 3.95055C8.66667 3.95055 8.66667 3.93424 8.66667 3.93424Z"
                     fill="white" />
             </svg>`;
-            continue;
-            }
-            if (platform.slug.indexOf("pc") === 0) {
-                platformSelected += `<svg class="svg-space" width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
+        continue;
+      }
+      if (platform.slug.indexOf("pc") === 0) {
+        platformSelected += `<svg class="svg-space" width="13" height="13" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M13 5.95833H5.95833V0.998704L13 0V5.95833ZM5.41667 1.08333V5.95833H0V1.80612L5.41667 1.08333ZM5.41667 6.5H0V11.1145L5.41667 11.9167V6.5ZM5.95833 11.912V6.5H13V13L5.95833 11.912Z"
                     fill="white" />
             </svg>`;
-            continue;
-            }
-            if (platform.slug.indexOf("playstation") === 0) {
-                platformSelected += `<svg class="svg-space" width="17" heigth="13" viewBox="0 0 17 13" xmlns="http://www.w3.org/2000/svg" fill="white">
+        continue;
+      }
+      if (platform.slug.indexOf("playstation") === 0) {
+        platformSelected += `<svg class="svg-space" width="17" heigth="13" viewBox="0 0 17 13" xmlns="http://www.w3.org/2000/svg" fill="white">
                 <path
                     d="M6.5 0.149317L6.5 12.0296L9.07955 12.8818L9.07955 2.92038C9.07955 2.45098 9.28024 2.13932 9.60212 2.2465C10.023 2.36823 10.1048 2.80063 10.1048 3.2648L10.1048 7.24326C11.7104 8.05369 12.9745 7.24283 12.9745 5.10456C12.9745 2.91953 12.2334 1.94614 10.0527 1.16352C9.19249 0.864854 7.59836 0.360857 6.5 0.149317Z" />
                 <path
@@ -166,10 +190,10 @@ function platformSelector(cardicons){
                 <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M16.1271 12.7978C16.0247 12.8989 15.8903 12.9561 15.7455 12.9561C15.6008 12.9561 15.462 12.8989 15.3594 12.7978C15.2582 12.6948 15.2021 12.5603 15.2021 12.4154C15.2021 12.1153 15.4451 11.8727 15.7455 11.8727C15.8903 11.8727 16.0247 11.928 16.1271 12.0314C16.2284 12.1324 16.2855 12.2692 16.2855 12.4154C16.2855 12.5603 16.2284 12.6948 16.1271 12.7978ZM15.2934 12.4154C15.2934 12.292 15.3396 12.1788 15.4239 12.095C15.5104 12.0092 15.6257 11.963 15.7455 11.963C15.8655 11.963 15.9779 12.0092 16.0622 12.095C16.1473 12.1788 16.1932 12.292 16.1932 12.4154C16.1932 12.6627 15.9922 12.8634 15.7455 12.8634C15.6257 12.8634 15.5104 12.8177 15.4239 12.7331C15.3396 12.6477 15.2934 12.5358 15.2934 12.4154ZM15.9927 12.6405C15.9976 12.6544 16.0034 12.6627 16.0118 12.6651L16.0193 12.6694V12.7038H15.9018L15.8996 12.6969L15.8916 12.6761C15.8903 12.6651 15.8887 12.6508 15.8871 12.6267L15.8819 12.5325C15.8805 12.4991 15.8696 12.4796 15.8494 12.4667C15.8345 12.4617 15.8141 12.4579 15.7837 12.4579H15.6205V12.7038H15.5134V12.0997H15.7941C15.8399 12.0997 15.8785 12.1078 15.908 12.1204C15.9672 12.1482 15.9976 12.1984 15.9976 12.269C15.9976 12.3037 15.9889 12.3362 15.9741 12.3601C15.9612 12.377 15.946 12.3924 15.9295 12.4075L15.9339 12.4106C15.9451 12.4185 15.9563 12.4263 15.9628 12.4378C15.9778 12.4543 15.9846 12.482 15.9858 12.5177L15.9885 12.5946C15.9889 12.6143 15.9905 12.6296 15.9927 12.6405ZM15.8661 12.3435C15.8835 12.3323 15.8916 12.31 15.8916 12.276C15.8916 12.2401 15.8792 12.2162 15.8549 12.2042C15.8399 12.1984 15.8214 12.1942 15.7964 12.1942H15.6205V12.3639H15.7867C15.8198 12.3639 15.846 12.3571 15.8661 12.3435Z" />
                 </svg>`;
-                continue;
-            }
-            if (platform.slug.indexOf("linux") === 0) {
-                platformSelected += `<svg class="svg-space" width="15" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg"
+        continue;
+      }
+      if (platform.slug.indexOf("linux") === 0) {
+        platformSelected += `<svg class="svg-space" width="15" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 viewBox="0 0 841.9 980" xml:space="preserve" fill="white">
                 <path class="st0"
@@ -216,10 +240,10 @@ function platformSelector(cardicons){
             c-14.1,24.9-14.5,50.1-0.2,74.9c3,5.3,8.5,9.1,13,13.4c0.8,0.8,3.2,1.3,3.9,0.7c4.4-3.4,8.6-7.2,12.5-10.6c-4.1-1.4-8-2-11.1-3.9
             c-14.6-9.2-19.2-37.5-8.6-51.2c5.5-7.1,13.8-8.9,20.5-3.1c4.7,4.1,8.6,9.7,11.2,15.4C358.2,199.3,357.9,209.8,353.9,220.5z" />
             </svg>`;
-            continue;
-            }
-            if (platform.slug.indexOf("android") === 0) {
-                platformSelected += `<svg class="svg-space" width="15" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg"
+        continue;
+      }
+      if (platform.slug.indexOf("android") === 0) {
+        platformSelected += `<svg class="svg-space" width="15" height="16" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                 viewBox="0 0 475.071 475.071" style="enable-background:new 0 0 475.071 475.071;"
                 xml:space="preserve" fill="white">
@@ -248,329 +272,367 @@ function platformSelector(cardicons){
             c8.186,0,15.133-2.851,20.841-8.562c5.715-5.711,8.568-12.658,8.568-20.837V183.005
             C438.532,174.822,435.679,167.921,429.964,162.306z" />
             </svg>`;
-            continue;
-            }
-        }
+        continue;
+      }
     }
-    return platformSelected;
+  }
+  return platformSelected;
 }
 
 // Cards release date
-function dateRelease(date){
-   const actualDate = (new Date(date.released)).toString().split(' ');
+function dateRelease(date) {
+  const actualDate = new Date(date.released).toString().split(" ");
 
-   return `${actualDate[1]} ${actualDate[2]} ${actualDate[3]}`;
+  return `${actualDate[1]} ${actualDate[2]} ${actualDate[3]}`;
 }
 
- // Cards genres 
-function showGenres(cardGenres){
-    let genre = cardGenres.genres
-    let genreactual =''
-    for (let x = 0; x < genre.length; x++) {
-        genreactual += genre[x].name;
-        if(x != genre.length-1 ){
-            genreactual += ',';
-        }
+// Cards genres
+function showGenres(cardGenres) {
+  let genre = cardGenres.genres;
+  let genreactual = "";
+  for (let x = 0; x < genre.length; x++) {
+    genreactual += genre[x].name;
+    if (x != genre.length - 1) {
+      genreactual += ",";
+    }
+  }
+  return `${genreactual}`;
 }
-return `${genreactual}`;
-}
-
 
 // Modal event in the cards
-async function showModalEvent(id){
-    let modaltitle;
-    let modalimg;
-    let modalreleasedate;
-    let modalgenres = "";
-    let modalplatforms = [];
-    let modaldescription;
-    let rank;
-    const modalinfo = await getInfoWithID(id)
-    const ingamepics = await gamePicsFromTheApi(modalinfo.slug);
+async function showModalEvent(id) {
+  let modaltitle;
+  let modalimg;
+  let modalreleasedate;
+  let modalgenres = "";
+  let modalplatforms = [];
+  let modaldescription;
+  let rank;
+  const modalinfo = await getInfoWithID(id);
+  const ingamepics = await gamePicsFromTheApi(modalinfo.slug);
 
-    let cardallinfo = document.querySelectorAll(".card-interact-button");
-    for(let f=0; f < cardallinfo.length; f++){
-        if(cardallinfo[f].getAttribute("onclick") === `showModalEvent(${id})`){
-            // Title
-            modaltitle = cardallinfo[f].querySelector(".game-title").textContent;
-            // backgound img
-            modalimg = cardallinfo[f].querySelector(".image-card").currentSrc;
-            //release date
-            modalreleasedate = cardallinfo[f].querySelector(".date").textContent;
-            //genres
-            modalgenres = cardallinfo[f].querySelector("#genres").textContent;
-            //platmfoms
-            modalplatforms.push(cardallinfo[f].querySelector(".plataforms-icons").innerHTML);
-            modaldescription = await description(id)
-            rank = cardallinfo[f].querySelector(".number-game").textContent;
-        }
+  let cardallinfo = document.querySelectorAll(".card-interact-button");
+  for (let f = 0; f < cardallinfo.length; f++) {
+    if (cardallinfo[f].getAttribute("onclick") === `showModalEvent(${id})`) {
+      // Title
+      modaltitle = cardallinfo[f].querySelector(".game-title").textContent;
+      // backgound img
+      modalimg = cardallinfo[f].querySelector(".image-card").currentSrc;
+      //release date
+      modalreleasedate = cardallinfo[f].querySelector(".date").textContent;
+      //genres
+      modalgenres = cardallinfo[f].querySelector("#genres").textContent;
+      //platmfoms
+      modalplatforms.push(
+        cardallinfo[f].querySelector(".plataforms-icons").innerHTML
+      );
+      modaldescription = await description(id);
+      rank = cardallinfo[f].querySelector(".number-game").textContent;
     }
-    document.querySelector(".game-picture").setAttribute("src", `${ingamepics[0]}`)
-    document.querySelector("#picture-n1").setAttribute("src", `${ingamepics[1]}`)
-    document.querySelector("#picture-n2").setAttribute("src", `${ingamepics[2]}`)
-    document.querySelector("#picture-n3").setAttribute("src", `${ingamepics[3]}`)
-    document.querySelector("#picture-n4").setAttribute("src", `${ingamepics[4]}`)
-    document.querySelector(".modal-icons").innerHTML = modalplatforms
-    document.querySelector(".modal-img").setAttribute("src", `${modalimg}`);
-    document.querySelector(".modal-title").textContent = modaltitle;
-    document.querySelector("#modal-date").textContent = modalreleasedate;
-    document.querySelector(".release-modal").textContent = modalreleasedate;
-    document.querySelector("#modal-rank").textContent = `${rank}`
-    document.querySelector(".modal-description-text").innerHTML = modaldescription;
+  }
+  document
+    .querySelector(".game-picture")
+    .setAttribute("src", `${ingamepics[0]}`);
+  document.querySelector("#picture-n1").setAttribute("src", `${ingamepics[1]}`);
+  document.querySelector("#picture-n2").setAttribute("src", `${ingamepics[2]}`);
+  document.querySelector("#picture-n3").setAttribute("src", `${ingamepics[3]}`);
+  document.querySelector("#picture-n4").setAttribute("src", `${ingamepics[4]}`);
+  document.querySelector(".modal-icons").innerHTML = modalplatforms;
+  document.querySelector(".modal-img").setAttribute("src", `${modalimg}`);
+  document.querySelector(".modal-title").textContent = modaltitle;
+  document.querySelector("#modal-date").textContent = modalreleasedate;
+  document.querySelector(".release-modal").textContent = modalreleasedate;
+  document.querySelector("#modal-rank").textContent = `${rank}`;
+  document.querySelector(".modal-description-text").innerHTML =
+    modaldescription;
 
-    const plataformGames = getPlatforms(modalinfo.parent_platforms);
-    document.querySelector(".platformsModal").textContent = plataformGames; 
-    const  age = getAgerating(modalinfo.esrb_rating);
-    document.querySelector(".rating").textContent = age;
-    const publisher = getPublisher(modalinfo.publishers[0]);
-    document.querySelector(".publisher-modal").textContent = publisher;
-    const web = getWebsite(modalinfo.website);
-    document.querySelector(".website-modal").textContent = web;
-    const developer = getDeveloper(modalinfo.developers[0]);
-    document.querySelector(".dev-modal").textContent = developer;
+  const plataformGames = getPlatforms(modalinfo.parent_platforms);
+  document.querySelector(".platformsModal").textContent = plataformGames;
+  const age = getAgerating(modalinfo.esrb_rating);
+  document.querySelector(".rating").textContent = age;
+  const publisher = getPublisher(modalinfo.publishers[0]);
+  document.querySelector(".publisher-modal").textContent = publisher;
+  const web = getWebsite(modalinfo.website);
+  document.querySelector(".website-modal").textContent = web;
+  const developer = getDeveloper(modalinfo.developers[0]);
+  document.querySelector(".dev-modal").textContent = developer;
 
+  let modal = document.getElementById("modal-back-sadow");
+  modal.style.display = "flex";
+  let exit = document.querySelector(".modal-out");
+  modal.addEventListener("click", closeModal);
+}
 
-
-    let modal = document.getElementById("modal-back-sadow")
-    modal.style.display = "flex";
-    let exit = document.querySelector(".modal-out")
-    modal.addEventListener('click', closeModal)
-    }
-
- function closeModal(){
-    let modal = document.getElementById("modal-back-sadow")
-    modal.style.display = "none";
-} 
-// modal bottom info 
+function closeModal() {
+  let modal = document.getElementById("modal-back-sadow");
+  modal.style.display = "none";
+}
+// modal bottom info
 // platforms in bottom
 function getPlatforms(platformsApi) {
-    if (platformsApi === null) {
-        return "No platform";
+  if (platformsApi === null) {
+    return "No platform";
+  } else {
+    let platformSelected;
+    for (let e = 0; e < platformsApi.length; e++) {
+      platformSelected += platformsApi[e].platform.name + ", ";
     }
-    else {
-        let platformSelected
-        for ( let e = 0; e < platformsApi.length; e++) {
-            platformSelected += platformsApi[e].platform.name + ", ";
-        }
-        return platformSelected.substring(9, platformSelected.length -2);
-    }
+    return platformSelected.substring(9, platformSelected.length - 2);
+  }
 }
 // age rating
 function getAgerating(ageApi) {
-    if(ageApi === null){
-        return ageApi = "Nor Rated";
-    }
-    return ageApi.name
+  if (ageApi === null) {
+    return (ageApi = "Nor Rated");
+  }
+  return ageApi.name;
 }
 // Publisher
 function getPublisher(publisherApi) {
-    if (publisherApi == null) {
-        return publisherApi = "Not defined";
-    }
-    return publisherApi.name;
-} 
+  if (publisherApi == null) {
+    return (publisherApi = "Not defined");
+  }
+  return publisherApi.name;
+}
 // Website
 function getWebsite(webApi) {
-    if(webApi == "") {
-        return webApi = "No website";
-    }
-    return webApi
-}   
+  if (webApi == "") {
+    return (webApi = "No website");
+  }
+  return webApi;
+}
 // Developer
 function getDeveloper(devApi) {
-    if(devApi == null) {
-        return devApi = "No website";
-    }
-    return devApi.name;
+  if (devApi == null) {
+    return (devApi = "No website");
+  }
+  return devApi.name;
 }
 // Modal description
-async function description(id){
-    const gameCompleteDescription = await getInfoWithID(id);
-    return gameCompleteDescription.description;
+async function description(id) {
+  const gameCompleteDescription = await getInfoWithID(id);
+  return gameCompleteDescription.description;
 }
 // Modal get information
 async function getInfoWithID(gameId) {
-    const fetchdata = await fetch(`https://api.rawg.io/api/games/${gameId}?key=${apiKey}`);
-    let datadescription = await fetchdata.json();
-    return datadescription;
+  const fetchdata = await fetch(
+    `https://api.rawg.io/api/games/${gameId}?key=${apiKey}`
+  );
+  let datadescription = await fetchdata.json();
+  return datadescription;
 }
-// Modal screenshots 
-async function gamePicsFromTheApi(slug){
-    const fetchdata = await fetch(`https://api.rawg.io/api/games/${slug}/screenshots?key=${apiKey}`);
-    let slugdata = await fetchdata.json();
-    let gamepictures = [];
-    for (let x = 0; x < slugdata.results.length; x ++) {
-        gamepictures.push(slugdata.results[x].image);
-    }
-    return gamepictures
-    
-   
+// Modal screenshots
+async function gamePicsFromTheApi(slug) {
+  const fetchdata = await fetch(
+    `https://api.rawg.io/api/games/${slug}/screenshots?key=${apiKey}`
+  );
+  let slugdata = await fetchdata.json();
+  let gamepictures = [];
+  for (let x = 0; x < slugdata.results.length; x++) {
+    gamepictures.push(slugdata.results[x].image);
+  }
+  return gamepictures;
 }
-window.addEventListener("load", changeColumnsButton);
 
 // Change cards to columns
-function changeColumnsButton(cardsData){
-    const gridspace = document.querySelector(".grid-container")
-    const buttonChangetoColumns = document.querySelector(".button-column")
-    const buttonChangetoGrid = document.querySelector(".button-grid")
-     buttonChangetoColumns.addEventListener('click', async e =>{
-        document.getElementById("card-grid-container").classList.remove("grid-container")
-        document.getElementById("card-grid-container").classList.add("one-column-container")
-        let cardStyle = document.querySelectorAll(".cards-style")
-        let cardbuttonbox = document.querySelectorAll("#button")
-        let imgcolumn = document.querySelectorAll(".image-card")
-        let columninfo = document.querySelectorAll(".bottom-info-card")
-        let titlecontainer = document.querySelectorAll(".title-plataform-container")
-        let title = document.querySelectorAll("#title")
-        let date = document.querySelectorAll(".date-container")
-        let rank = document.querySelectorAll(".number-gif")
-        let ranknumber = document.querySelectorAll(".number-game")
-        for(let i = 0; i< cardsData.results.length; i++){
-            const cardDescrition = cardsData.results[i]
-            cardStyle[i].style.width="80%";
-            cardStyle[i].style.height="538px";
-            cardbuttonbox[i].style.display="flex";
-            cardbuttonbox[i].style.alignItems="center";
-            imgcolumn[i].style.width="100%";
-            imgcolumn[i].style.height="315px";
-            columninfo[i].style.width="89.5%";
-            columninfo[i].style.padding="10px";
-            titlecontainer[i].style.height="50px";
-            title[i].style.overflow="";
-            title[i].style.textOverflow=""
-            date[i].style.display="flex";
-            date[i].style.marginTop="17px";
-            date[i].style.gap="40px";
-            rank[i].style.display="flex";
-            rank[i].style.marginTop="10px";
-            ranknumber[i].style.marginRight="60px";
-            ranknumber[i].style.paddingTop="10px";
-            let descriptioncolumn =`<div class="description-column">${ await description(cardDescrition.id)}</div>`;
-            cardbuttonbox[i].innerHTML += descriptioncolumn
-        }
-        
-    })
-    buttonChangetoGrid.addEventListener('click', async e =>{
-        document.getElementById("card-grid-container").classList.remove("one-column-container")
-        document.getElementById("card-grid-container").classList.add("grid-container")
-        let cardStyle = document.querySelectorAll(".cards-style")
-        let cardbuttonbox = document.querySelectorAll("#button")
-        let imgcolumn = document.querySelectorAll(".image-card")
-        let columninfo = document.querySelectorAll(".bottom-info-card")
-        let titlecontainer = document.querySelectorAll(".title-plataform-container")
-        let title = document.querySelectorAll("#title")
-        let date = document.querySelectorAll(".date-container")
-        let rank =document.querySelectorAll(".number-gif")
-        let ranknumber = document.querySelectorAll(".number-game")
-         let cardDescription = document.querySelectorAll(".description-column")
-        for(let i = 0; i< cardsData.results.length; i++){
-            cardStyle[i].style.width="363px";
-            cardStyle[i].style.height="314px";
-            cardbuttonbox[i].style.display="auto";
-            cardbuttonbox[i].style.alignItems="";
-            imgcolumn[i].style.width="363px";
-            imgcolumn[i].style.height="217.3px";
-            columninfo[i].style.width="auto";
-            columninfo[i].style.padding="";
-            titlecontainer[i].style.height="23px"
-            title[i].style.overflow="hidden";
-            title[i].style.textOverflow="ellipsis";
-            date[i].style.display="";
-            date[i].style.marginTop="0"
-            date[i].style.gap="";
-            rank[i].style.display="";
-            rank[i].style.marginTop=""
-            ranknumber[i].style.marginRight="";
-            ranknumber[i].style.paddingTop="";
-            cardDescription[i].remove();
-        }
-        window.addEventListener('load', (event) => {
-            cardDescription.remove() = cardDescription.remove() + 'load\n';
-        })
-        
-    })
-} 
+function changeColumnsButton(cardsData) {
+  const cardsNumbers = document.querySelectorAll(".cards-style");
+  const buttonChangetoColumns = document.querySelector(".button-column");
+  const buttonChangetoGrid = document.querySelector(".button-grid");
+
+  buttonChangetoColumns.addEventListener("click", async (e) => {
+    if (singleColumnGrid === false) {
+      singleColumnGrid = true;
+      document
+        .getElementById("card-grid-container")
+        .classList.remove("grid-container");
+      document
+        .getElementById("card-grid-container")
+        .classList.add("one-column-container");
+      let cardStyle = document.querySelectorAll(".cards-style");
+      let cardbuttonbox = document.querySelectorAll("#button");
+      let imgcolumn = document.querySelectorAll(".image-card");
+      let columninfo = document.querySelectorAll(".bottom-info-card");
+      let titlecontainer = document.querySelectorAll(
+        ".title-plataform-container"
+      );
+      let title = document.querySelectorAll("#title");
+      let date = document.querySelectorAll(".date-container");
+      let rank = document.querySelectorAll(".number-gif");
+      let ranknumber = document.querySelectorAll(".number-game");
+      for (let i = 0; i < cardsData.results.length; i++) {
+        const cardDescrition = cardsData.results[i];
+        cardStyle[i].style.width = "80%";
+        cardStyle[i].style.height = "538px";
+        cardbuttonbox[i].style.display = "flex";
+        cardbuttonbox[i].style.alignItems = "center";
+        imgcolumn[i].style.width = "100%";
+        imgcolumn[i].style.height = "315px";
+        columninfo[i].style.width = "89.5%";
+        columninfo[i].style.padding = "10px";
+        titlecontainer[i].style.height = "50px";
+        title[i].style.overflow = "";
+        title[i].style.textOverflow = "";
+        date[i].style.display = "flex";
+        date[i].style.marginTop = "17px";
+        date[i].style.gap = "40px";
+        rank[i].style.display = "flex";
+        rank[i].style.marginTop = "10px";
+        ranknumber[i].style.marginRight = "60px";
+        ranknumber[i].style.paddingTop = "10px";
+        let descriptioncolumn = `<div class="description-column">${await description(
+          cardDescrition.id
+        )}</div>`;
+        cardbuttonbox[i].innerHTML += descriptioncolumn;
+      }
+    }
+  });
+  buttonChangetoGrid.addEventListener("click", async (e) => {
+    if (singleColumnGrid === true) {
+      document
+        .getElementById("card-grid-container")
+        .classList.remove("one-column-container");
+      document
+        .getElementById("card-grid-container")
+        .classList.add("grid-container");
+      let cardStyle = document.querySelectorAll(".cards-style");
+      let cardbuttonbox = document.querySelectorAll("#button");
+      let imgcolumn = document.querySelectorAll(".image-card");
+      let columninfo = document.querySelectorAll(".bottom-info-card");
+      let titlecontainer = document.querySelectorAll(
+        ".title-plataform-container"
+      );
+      let title = document.querySelectorAll("#title");
+      let date = document.querySelectorAll(".date-container");
+      let rank = document.querySelectorAll(".number-gif");
+      let ranknumber = document.querySelectorAll(".number-game");
+      let cardDescription = document.querySelectorAll(".description-column");
+      for (let i = 0; i < cardsData.results.length; i++) {
+        cardStyle[i].style.width = "363px";
+        cardStyle[i].style.height = "314px";
+        cardbuttonbox[i].style.display = "auto";
+        cardbuttonbox[i].style.alignItems = "";
+        imgcolumn[i].style.width = "363px";
+        imgcolumn[i].style.height = "217.3px";
+        columninfo[i].style.width = "auto";
+        columninfo[i].style.padding = "";
+        titlecontainer[i].style.height = "23px";
+        title[i].style.overflow = "hidden";
+        title[i].style.textOverflow = "ellipsis";
+        date[i].style.display = "";
+        date[i].style.marginTop = "0";
+        date[i].style.gap = "";
+        rank[i].style.display = "";
+        rank[i].style.marginTop = "";
+        ranknumber[i].style.marginRight = "";
+        ranknumber[i].style.paddingTop = "";
+        cardDescription[i].remove();
+        singleColumnGrid = false;
+      }
+    }
+  });
+}
 
 // searching interaction
-function searchGame(){
-    
-    let searchinputText =document.getElementById("search-input").value;
-    applySearchresults(searchinputText)
-    function gridContainercards(){
-        document.getElementById("card-grid-container").classList.remove("one-column-container")
-        document.getElementById("card-grid-container").classList.add("grid-container")
-        let cardStyle = document.querySelectorAll(".cards-style")
-        let cardbuttonbox = document.querySelectorAll("#button")
-        let imgcolumn = document.querySelectorAll(".image-card")
-        let columninfo = document.querySelectorAll(".bottom-info-card")
-        let titlecontainer = document.querySelectorAll(".title-plataform-container")
-        let title = document.querySelectorAll("#title")
-        let date = document.querySelectorAll(".date-container")
-        let rank =document.querySelectorAll(".number-gif")
-        let ranknumber = document.querySelectorAll(".number-game")
-         let cardDescription = document.querySelectorAll(".description-column")
-        for(let i = 0; i< 20; i++){
-            cardStyle[i].style.width="363px";
-            cardStyle[i].style.height="314px";
-            cardbuttonbox[i].style.display="auto";
-            cardbuttonbox[i].style.alignItems="";
-            imgcolumn[i].style.width="363px";
-            imgcolumn[i].style.height="217.3px";
-            columninfo[i].style.width="auto";
-            columninfo[i].style.padding="";
-            titlecontainer[i].style.height="23px"
-            title[i].style.overflow="hidden";
-            title[i].style.textOverflow="ellipsis";
-            date[i].style.display="";
-            date[i].style.marginTop="0"
-            date[i].style.gap="";
-            rank[i].style.display="";
-            rank[i].style.marginTop=""
-            ranknumber[i].style.marginRight="";
-            ranknumber[i].style.paddingTop="";
-            cardDescription[i].remove();
-        }
+function searchGame() {
+  let searchinputText = document.getElementById("search-input").value;
+  applySearchresults(searchinputText);
+  function gridContainercards() {
+    document
+      .getElementById("card-grid-container")
+      .classList.remove("one-column-container");
+    document
+      .getElementById("card-grid-container")
+      .classList.add("grid-container");
+    let cardStyle = document.querySelectorAll(".cards-style");
+    let cardbuttonbox = document.querySelectorAll("#button");
+    let imgcolumn = document.querySelectorAll(".image-card");
+    let columninfo = document.querySelectorAll(".bottom-info-card");
+    let titlecontainer = document.querySelectorAll(
+      ".title-plataform-container"
+    );
+    let title = document.querySelectorAll("#title");
+    let date = document.querySelectorAll(".date-container");
+    let rank = document.querySelectorAll(".number-gif");
+    let ranknumber = document.querySelectorAll(".number-game");
+    let cardDescription = document.querySelectorAll(".description-column");
+    for (let i = 0; i < 20; i++) {
+      cardStyle[i].style.width = "363px";
+      cardStyle[i].style.height = "314px";
+      cardbuttonbox[i].style.display = "auto";
+      cardbuttonbox[i].style.alignItems = "";
+      imgcolumn[i].style.width = "363px";
+      imgcolumn[i].style.height = "217.3px";
+      columninfo[i].style.width = "auto";
+      columninfo[i].style.padding = "";
+      titlecontainer[i].style.height = "23px";
+      title[i].style.overflow = "hidden";
+      title[i].style.textOverflow = "ellipsis";
+      date[i].style.display = "";
+      date[i].style.marginTop = "0";
+      date[i].style.gap = "";
+      rank[i].style.display = "";
+      rank[i].style.marginTop = "";
+      ranknumber[i].style.marginRight = "";
+      ranknumber[i].style.paddingTop = "";
+      cardDescription[i].remove();
     }
-    
+  }
 }
 
 async function applySearchresults(searchInput) {
-    const fetchSearchApi = await fetch(`${urlKey}&search=${searchInput}`)
-    const dataSearched = await fetchSearchApi.json();
-    page = dataSearched.next;
-    document.getElementById("new-trend").innerHTML = "Search Result";
-    document.querySelector(".subtitle-card-grid").innerHTML = `"${searchInput}" Results`;
-    document.querySelector(".grid-container").innerHTML = "";
-    for ( let e = 0 ; e<dataSearched.results.length; e++){
-        let dataResults = dataSearched.results[e];
-        let createcard = ``;
-        createcard = `<li class='cards-style'>
-        <button class='card-interact-button' id='button' onclick=showModalEvent(${dataResults.id})>
-            <img class='image-card' src='${dataResults.background_image}' alt='games'>
+  document.querySelector(".loader-cards").style.display = "block";
+  const fetchSearchApi = await fetch(`${urlKey}&search=${searchInput}`);
+  const dataSearched = await fetchSearchApi.json();
+  page = dataSearched.next;
+  loadpage = true;
+  document.getElementById("new-trend").innerHTML = "Search Result";
+  document.querySelector(
+    ".subtitle-card-grid"
+  ).innerHTML = `"${searchInput}" Results`;
+  document.querySelector(".grid-container").innerHTML = "";
+  for (let e = 0; e < dataSearched.results.length; e++) {
+    let dataResults = dataSearched.results[e];
+    let createcard = ``;
+    createcard = `<li class='cards-style'>
+        <button class='card-interact-button' id='button' onclick=showModalEvent(${
+          dataResults.id
+        })>
+            <img class='image-card' src='${
+              dataResults.background_image
+            }' alt='games'>
             <div class="bottom-info-card">
                                     <div class="title-plataform-container">
-                                        <p class="game-title" id="title">${dataResults.name}</p>
-                                        <div class="plataforms-icons">${platformSelector(dataResults)}</div>
+                                        <p class="game-title" id="title">${
+                                          dataResults.name
+                                        }</p>
+                                        <div class="plataforms-icons">${platformSelector(
+                                          dataResults
+                                        )}</div>
                                     </div>
                                     <div class="date-gif">
                                         <div class="date-container">
                                             <div>
                                             <div class="text-container">
                                                 <p class="release text-grid">Release date</p>
-                                                <p class="date text-grid">${dateRelease(dataResults)}</p>
+                                                <p class="date text-grid">${dateRelease(
+                                                  dataResults
+                                                )}</p>
                                             </div>
                                             <div class="line"></div>
                                             </div>
                                             <div>
                                             <div class="text-container">
                                                 <p class="text-grid">Genres</p>
-                                                <p class="text-grid" id="genres">${showGenres(dataResults)}</p>
+                                                <p class="text-grid" id="genres">${showGenres(
+                                                  dataResults
+                                                )}</p>
                                             </div>
                                             <div class="line"></div>
                                             </div>
                                         </div>
                                         <div class="number-gif">
-                                            <p class="number-game">#${e+1}</p>
+                                            <p class="number-game">#${e + 1}</p>
                                             <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
                                                 </svg>
@@ -580,48 +642,63 @@ async function applySearchresults(searchInput) {
                         </div>
         </button>
         </li>`;
-        document.querySelector("#card-grid-container").innerHTML += createcard;
-        
-    }
+    document.querySelector("#card-grid-container").innerHTML += createcard;
+  }
+  document.querySelector(".loader-cards").style.display = "none";
 }
 
 async function homeGame() {
-    const fetchHomeApi = await fetch(`${urlKey}`);
-    const dataHome = await fetchHomeApi.json();
-    page = dataHome.next;
-    document.getElementById("new-trend").innerHTML = "New and trending"
-    document.querySelector(".subtitle-card-grid").innerHTML = "Based on player counts and realease date"
-    document.querySelector(".grid-container").innerHTML = "";
-    for ( let e = 0 ; e<dataHome.results.length; e++) {
-        let dataResults = dataHome.results[e];
-        let createcard = ``;
-        createcard = `<li class='cards-style'>
-        <button class='card-interact-button' id='button' onclick=showModalEvent(${dataResults.id})>
-            <img class='image-card' src='${dataResults.background_image}' alt='games'>
+  document.querySelector(".loader-cards").style.display = "block";
+  const fetchHomeApi = await fetch(`${urlKey}`);
+  const dataHome = await fetchHomeApi.json();
+  page = dataHome.next;
+  loadpage = false;
+  document.getElementById("new-trend").innerHTML = "New and trending";
+  document.querySelector(".subtitle-card-grid").innerHTML =
+    "Based on player counts and realease date";
+  document.querySelector(".grid-container").innerHTML = "";
+  for (let e = 0; e < dataHome.results.length; e++) {
+    let dataResults = dataHome.results[e];
+    let createcard = ``;
+    createcard = `<li class='cards-style'>
+        <button class='card-interact-button' id='button' onclick=showModalEvent(${
+          dataResults.id
+        })>
+            <img class='image-card' src='${
+              dataResults.background_image
+            }' alt='games'>
             <div class="bottom-info-card">
                                     <div class="title-plataform-container">
-                                        <p class="game-title" id="title">${dataResults.name}</p>
-                                        <div class="plataforms-icons">${platformSelector(dataResults)}</div>
+                                        <p class="game-title" id="title">${
+                                          dataResults.name
+                                        }</p>
+                                        <div class="plataforms-icons">${platformSelector(
+                                          dataResults
+                                        )}</div>
                                     </div>
                                     <div class="date-gif">
                                         <div class="date-container">
                                             <div>
                                             <div class="text-container">
                                                 <p class="release text-grid">Release date</p>
-                                                <p class="date text-grid">${dateRelease(dataResults)}</p>
+                                                <p class="date text-grid">${dateRelease(
+                                                  dataResults
+                                                )}</p>
                                             </div>
                                             <div class="line"></div>
                                             </div>
                                             <div>
                                             <div class="text-container">
                                                 <p class="text-grid">Genres</p>
-                                                <p class="text-grid" id="genres">${showGenres(dataResults)}</p>
+                                                <p class="text-grid" id="genres">${showGenres(
+                                                  dataResults
+                                                )}</p>
                                             </div>
                                             <div class="line"></div>
                                             </div>
                                         </div>
                                         <div class="number-gif">
-                                            <p class="number-game">#${e+1}</p>
+                                            <p class="number-game">#${e + 1}</p>
                                             <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
                                                 </svg>
@@ -631,106 +708,68 @@ async function homeGame() {
                         </div>
         </button>
         </li>`;
-        document.querySelector("#card-grid-container").innerHTML += createcard;
-    }
-
+    document.querySelector("#card-grid-container").innerHTML += createcard;
+  }
+  document.querySelector(".loader-cards").style.display = "none";
 }
 
 async function thisWeek() {
+  document.querySelector(".loader-cards").style.display = "block";
   let lastweekDate = lastweek();
   let todayDate = thisDay();
-  const fetchLastweek = await fetch(`${urlKey}&dates=${lastweekDate},${todayDate}`)
-  const dataweek = await fetchLastweek.json()
+  loadpage = false;
+  const fetchLastweek = await fetch(
+    `${urlKey}&dates=${lastweekDate},${todayDate}`
+  );
+  const dataweek = await fetchLastweek.json();
   page = dataweek.next;
   document.getElementById("new-trend").innerHTML = "This Week";
-  document.querySelector(".subtitle-card-grid").innerHTML = `Games lunched in this week`;
+  document.querySelector(
+    ".subtitle-card-grid"
+  ).innerHTML = `Games lunched in this week`;
   document.querySelector(".grid-container").innerHTML = "";
-  for ( let e = 0 ; e<dataweek.results.length; e++){
+  for (let e = 0; e < dataweek.results.length; e++) {
     let dataResults = dataweek.results[e];
     let createcard = ``;
     createcard = `<li class='cards-style'>
-    <button class='card-interact-button' id='button' onclick=showModalEvent(${dataResults.id})>
-        <img class='image-card' src='${dataResults.background_image}' alt='games'>
+    <button class='card-interact-button' id='button' onclick=showModalEvent(${
+      dataResults.id
+    })>
+        <img class='image-card' src='${
+          dataResults.background_image
+        }' alt='games'>
         <div class="bottom-info-card">
                                 <div class="title-plataform-container">
-                                    <p class="game-title" id="title">${dataResults.name}</p>
-                                    <div class="plataforms-icons">${platformSelector(dataResults)}</div>
+                                    <p class="game-title" id="title">${
+                                      dataResults.name
+                                    }</p>
+                                    <div class="plataforms-icons">${platformSelector(
+                                      dataResults
+                                    )}</div>
                                 </div>
                                 <div class="date-gif">
                                     <div class="date-container">
                                         <div>
                                         <div class="text-container">
                                             <p class="release text-grid">Release date</p>
-                                            <p class="date text-grid">${dateRelease(dataResults)}</p>
+                                            <p class="date text-grid">${dateRelease(
+                                              dataResults
+                                            )}</p>
                                         </div>
                                         <div class="line"></div>
                                         </div>
                                         <div>
                                         <div class="text-container">
                                             <p class="text-grid">Genres</p>
-                                            <p class="text-grid" id="genres">${showGenres(dataResults)}</p>
+                                            <p class="text-grid" id="genres">${showGenres(
+                                              dataResults
+                                            )}</p>
                                         </div>
                                         <div class="line"></div>
                                         </div>
                                     </div>
                                     <div class="number-gif">
-                                        <p class="number-game">#${e+1}</p>
-                                        <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
-                                            </svg>
-                                            </div>
-                                    </div>
-                                </div>
-                    </div>
-    </button>
-    </li>`;
-    document.querySelector("#card-grid-container").innerHTML += createcard;
-    
-}
-
-
-}
-
-
-async function thisMonth() {
-    let month = lastMonth();
-    let todayDate = thisDay();
-    const fetchLastmonth = await fetch(`${urlKey}&dates=${month},${todayDate}`)
-  const datamonth = await fetchLastmonth.json()
-  page = datamonth.next;
-  document.getElementById("new-trend").innerHTML = "This Month";
-  document.querySelector(".subtitle-card-grid").innerHTML = `Games lunched in this month`;
-  document.querySelector(".grid-container").innerHTML = "";
-  for ( let e = 0 ; e<datamonth.results.length; e++) {
-    let dataResults = datamonth.results[e];
-    let createcard = ``;
-    createcard = `<li class='cards-style'>
-    <button class='card-interact-button' id='button' onclick=showModalEvent(${dataResults.id})>
-        <img class='image-card' src='${dataResults.background_image}' alt='games'>
-        <div class="bottom-info-card">
-                                <div class="title-plataform-container">
-                                    <p class="game-title" id="title">${dataResults.name}</p>
-                                    <div class="plataforms-icons">${platformSelector(dataResults)}</div>
-                                </div>
-                                <div class="date-gif">
-                                    <div class="date-container">
-                                        <div>
-                                        <div class="text-container">
-                                            <p class="release text-grid">Release date</p>
-                                            <p class="date text-grid">${dateRelease(dataResults)}</p>
-                                        </div>
-                                        <div class="line"></div>
-                                        </div>
-                                        <div>
-                                        <div class="text-container">
-                                            <p class="text-grid">Genres</p>
-                                            <p class="text-grid" id="genres">${showGenres(dataResults)}</p>
-                                        </div>
-                                        <div class="line"></div>
-                                        </div>
-                                    </div>
-                                    <div class="number-gif">
-                                        <p class="number-game">#${e+1}</p>
+                                        <p class="number-game">#${e + 1}</p>
                                         <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
                                             </svg>
@@ -742,88 +781,189 @@ async function thisMonth() {
     </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
   }
+  document.querySelector(".loader-cards").style.display = "none";
+}
+
+async function thisMonth() {
+  document.querySelector(".loader-cards").style.display = "block";
+  let month = lastMonth();
+  let todayDate = thisDay();
+  const fetchLastmonth = await fetch(`${urlKey}&dates=${month},${todayDate}`);
+  const datamonth = await fetchLastmonth.json();
+  page = datamonth.next;
+  loadpage = false;
+  document.getElementById("new-trend").innerHTML = "This Month";
+  document.querySelector(
+    ".subtitle-card-grid"
+  ).innerHTML = `Games lunched in this month`;
+  document.querySelector(".grid-container").innerHTML = "";
+  for (let e = 0; e < datamonth.results.length; e++) {
+    let dataResults = datamonth.results[e];
+    let createcard = ``;
+    createcard = `<li class='cards-style'>
+    <button class='card-interact-button' id='button' onclick=showModalEvent(${
+      dataResults.id
+    })>
+        <img class='image-card' src='${
+          dataResults.background_image
+        }' alt='games'>
+        <div class="bottom-info-card">
+                                <div class="title-plataform-container">
+                                    <p class="game-title" id="title">${
+                                      dataResults.name
+                                    }</p>
+                                    <div class="plataforms-icons">${platformSelector(
+                                      dataResults
+                                    )}</div>
+                                </div>
+                                <div class="date-gif">
+                                    <div class="date-container">
+                                        <div>
+                                        <div class="text-container">
+                                            <p class="release text-grid">Release date</p>
+                                            <p class="date text-grid">${dateRelease(
+                                              dataResults
+                                            )}</p>
+                                        </div>
+                                        <div class="line"></div>
+                                        </div>
+                                        <div>
+                                        <div class="text-container">
+                                            <p class="text-grid">Genres</p>
+                                            <p class="text-grid" id="genres">${showGenres(
+                                              dataResults
+                                            )}</p>
+                                        </div>
+                                        <div class="line"></div>
+                                        </div>
+                                    </div>
+                                    <div class="number-gif">
+                                        <p class="number-game">#${e + 1}</p>
+                                        <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
+                                            </svg>
+                                            </div>
+                                    </div>
+                                </div>
+                    </div>
+    </button>
+    </li>`;
+    document.querySelector("#card-grid-container").innerHTML += createcard;
+  }
+  document.querySelector(".loader-cards").style.display = "none";
 }
 function lastweek() {
-    var today = new Date();
-    var lastweek = new Date(today.getFullYear(), today.getMonth(), today.getDate()-7);
-    var day = String(lastweek.getDate()).padStart(2, '0');
-    var month = String(lastweek.getMonth()+1).padStart(2, '0');
-    var year = lastweek.getFullYear();
-    let lastweekstring = year + '-' + month + '-' + day;
-    return lastweekstring;
+  var today = new Date();
+  var lastweek = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 7
+  );
+  var day = String(lastweek.getDate()).padStart(2, "0");
+  var month = String(lastweek.getMonth() + 1).padStart(2, "0");
+  var year = lastweek.getFullYear();
+  let lastweekstring = year + "-" + month + "-" + day;
+  return lastweekstring;
 }
 function thisDay() {
-    var today = new Date();
-    var day = String(today.getDate()).padStart(2, '0');
-    var month = String(today.getMonth()+1).padStart(2, '0');
-    var year = today.getFullYear();
-    let todayString = year + '-' + month + '-' + day;
-    return todayString;
+  var today = new Date();
+  var day = String(today.getDate()).padStart(2, "0");
+  var month = String(today.getMonth() + 1).padStart(2, "0");
+  var year = today.getFullYear();
+  let todayString = year + "-" + month + "-" + day;
+  return todayString;
 }
 
 function lastMonth() {
-    var today = new Date();
-    var lastmonth = new Date(today.getFullYear(), today.getMonth(), today.getDate()-30);
-    var day = String(lastmonth.getDate()).padStart(2, '0');
-    var month = String(lastmonth.getMonth()+1).padStart(2, '0');
-    var year = lastmonth.getFullYear();
-    let lastmonthstring = year + '-' + month + '-' + day;
-    return lastmonthstring;
+  var today = new Date();
+  var lastmonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 30
+  );
+  var day = String(lastmonth.getDate()).padStart(2, "0");
+  var month = String(lastmonth.getMonth() + 1).padStart(2, "0");
+  var year = lastmonth.getFullYear();
+  let lastmonthstring = year + "-" + month + "-" + day;
+  return lastmonthstring;
 }
 
+// infinite Scrolling
+window.addEventListener("scroll", () => {
+  if (
+    window.scrollY + 1 + window.innerHeight >=
+      document.documentElement.scrollHeight &&
+    loadpage === false
+  ) {
+    loadScroll(page);
+  }
+});
 
-// infinite Scrolling 
-
-window.addEventListener('scroll', () => {
-    if(window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
-        loadScroll(page)
-    }
-})
-
-async function loadScroll(pagescrollindg){
-    let fetchpage = await fetch (`${pagescrollindg}`)
-        let pageData = await fetchpage.json()
-        console.log(pageData)
-        for ( let e = 0 ; e<pageData.results.length; e++){
-            let dataResults = pageData.results[e];
-            let createcard = ``;
-            createcard = `<li class='cards-style'>
-            <button class='card-interact-button' id='button' onclick=showModalEvent(${dataResults.id})>
-                <img class='image-card' src='${dataResults.background_image}' alt='games'>
-                <div class="bottom-info-card">
-                                        <div class="title-plataform-container">
-                                            <p class="game-title" id="title">${dataResults.name}</p>
-                                            <div class="plataforms-icons">${platformSelector(dataResults)}</div>
-                                        </div>
-                                        <div class="date-gif">
-                                            <div class="date-container">
-                                                <div>
-                                                <div class="text-container">
-                                                    <p class="release text-grid">Release date</p>
-                                                    <p class="date text-grid">${dateRelease(dataResults)}</p>
-                                                </div>
-                                                <div class="line"></div>
-                                                </div>
-                                                <div>
-                                                <div class="text-container">
-                                                    <p class="text-grid">Genres</p>
-                                                    <p class="text-grid" id="genres">${showGenres(dataResults)}</p>
-                                                </div>
-                                                <div class="line"></div>
-                                                </div>
+async function loadScroll(pagescrollindg) {
+  let fetchpage = await fetch(pagescrollindg);
+  let pageData = await fetchpage.json();
+  loadpage = true;
+  for (let e = 0; e < pageData.results.length; e++) {
+    let dataResults = pageData.results[e];
+    let createcard = ``;
+    createcard = `<li class='cards-style'>
+        <button class='card-interact-button' id='button' onclick=showModalEvent(${
+          dataResults.id
+        })>
+            <img class='image-card' src='${
+              dataResults.background_image
+            }' alt='games'>
+            <div class="bottom-info-card">
+                                    <div class="title-plataform-container">
+                                        <p class="game-title" id="title">${
+                                          dataResults.name
+                                        }</p>
+                                        <div class="plataforms-icons">${platformSelector(
+                                          dataResults
+                                        )}</div>
+                                    </div>
+                                    <div class="date-gif">
+                                        <div class="date-container">
+                                            <div>
+                                            <div class="text-container">
+                                                <p class="release text-grid">Release date</p>
+                                                <p class="date text-grid">${dateRelease(
+                                                  dataResults
+                                                )}</p>
                                             </div>
-                                            <div class="number-gif">
-                                                <p class="number-game">#${e+1}</p>
-                                                <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
-                                                    </svg>
-                                                    </div>
+                                            <div class="line"></div>
+                                            </div>
+                                            <div>
+                                            <div class="text-container">
+                                                <p class="text-grid">Genres</p>
+                                                <p class="text-grid" id="genres">${showGenres(
+                                                  dataResults
+                                                )}</p>
+                                            </div>
+                                            <div class="line"></div>
                                             </div>
                                         </div>
-                            </div>
-            </button>
-            </li>`;
-            document.querySelector("#card-grid-container").innerHTML += createcard;
-        }
-        page= pageData.next
+                                        <div class="number-gif">
+                                            <p class="number-game">#${e + 1}</p>
+                                            <div class="gif"><span class="plus">+</span><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M3 2.5C3 1.11929 4.11929 0 5.5 0C6.88071 0 8 1.11929 8 2.5C8 1.11929 9.11929 0 10.5 0C11.8807 0 13 1.11929 13 2.5V2.506C13 2.576 13 2.776 12.962 3H15C15.5523 3 16 3.44772 16 4V5C16 5.55228 15.5523 6 15 6H1C0.447715 6 0 5.55228 0 5V4C0 3.44772 0.447715 3 1 3H3.038C3.01159 2.83668 2.99888 2.67144 3 2.506V2.5ZM4.068 3H7V2.5C7 1.9641 6.7141 1.46891 6.25 1.20096C5.7859 0.933013 5.2141 0.933013 4.75 1.20096C4.2859 1.46891 4 1.9641 4 2.5C4 2.585 4.002 2.774 4.045 2.93C4.05101 2.95385 4.05869 2.97724 4.068 3ZM11.932 3H9V2.5C9 1.67157 9.67157 1 10.5 1C11.3284 1 12 1.67157 12 2.5C12 2.585 11.998 2.774 11.955 2.93C11.9489 2.95381 11.9412 2.9772 11.932 3ZM15 7V14.5C15 15.3284 14.3284 16 13.5 16H9V7H15ZM1 14.5C1 15.3284 1.67157 16 2.5 16H7V7H1V14.5Z" fill="white"/>
+                                                </svg>
+                                                </div>
+                                        </div>
+                                    </div>
+                        </div>
+        </button>
+        </li>`;
+    document.querySelector("#card-grid-container").innerHTML += createcard;
+  }
+  page = pageData.next;
+  loadpage = false;
+}
+// logout function
+
+document.querySelector(".logout").addEventListener("click", logout);
+document.querySelector(".logout_icon").addEventListener("click", logout);
+
+function logout() {
+  window.location = "index.html";
 }
