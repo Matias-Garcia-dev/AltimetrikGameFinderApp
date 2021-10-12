@@ -54,8 +54,6 @@ form.addEventListener("submit", (e) => {
 
 // Fetch with the local host Json server
 async function UserServer(email, password) {
-  console.log(email);
-  console.log(password);
   const loginResponse = await fetch("http://localhost:3000/users", {
     method: "POST",
     headers: {
