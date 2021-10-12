@@ -65,7 +65,7 @@ async function getGamesInformation(url, info) {
   }
 }
 
-// Create cards
+//     Create cards
 let createcard = ``;
 function cardsCreation(cardinfo) {
   page = cardinfo.next;
