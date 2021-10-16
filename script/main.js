@@ -11,6 +11,7 @@ var loadCardComplete = false;
 let loadpage = false;
 window.addEventListener("load", pageStarted);
 
+
 function pageStarted() {
   document.querySelector(".icon_search").addEventListener("click", searchGame);
   document.getElementById("search-input").addEventListener("keyup", (e) => {
@@ -18,18 +19,32 @@ function pageStarted() {
       searchGame();
     }
   });
-  document.querySelector("#home").addEventListener("click", (e) => {
+  document.querySelectorAll("#home")[0].addEventListener("click", (e) => {
     e.preventDefault();
     homeGame();
   });
-  document.querySelector(".week").addEventListener("click", (e) => {
+  document.querySelectorAll("#home")[1].addEventListener("click", (e) => {
+    e.preventDefault();
+    homeGame();
+  });
+  document.querySelectorAll(".week")[0].addEventListener("click", (e) => {
     e.preventDefault();
     thisWeek();
   });
-  document.querySelector(".month").addEventListener("click", (e) => {
+  document.querySelectorAll(".week")[1].addEventListener("click", (e) => {
+    e.preventDefault();
+    thisWeek();
+  });
+  document.querySelectorAll(".month")[0].addEventListener("click", (e) => {
     e.preventDefault();
     thisMonth();
   });
+  document.querySelectorAll(".month")[1].addEventListener("click", (e) => {
+    e.preventDefault();
+    thisMonth();
+  });
+  document.querySelector(".hamburguer").addEventListener("click", openNav);
+  document.querySelector(".exit-nav").addEventListener("click", closeNav);
 }
 
 const additionalHeader = {
@@ -359,8 +374,9 @@ async function showModalEvent(id) {
 
   let modal = document.getElementById("modal-back-sadow");
   modal.style.display = "flex";
-  let exit = document.querySelector(".modal-out");
-  modal.addEventListener("click", closeModal);
+  let exit = document.querySelector(".exit");
+  document.querySelector(".exit-click").addEventListener("click", closeModal)
+  exit.addEventListener("click", closeModal);
 }
 
 function closeModal() {
@@ -966,4 +982,11 @@ document.querySelector(".logout_icon").addEventListener("click", logout);
 
 function logout() {
   window.location = "index.html";
+}
+
+function openNav() {
+  document.querySelector(".nav-tablet-container").style.display="flex";
+}
+function closeNav() {
+  document.querySelector(".nav-tablet-container").style.display="none";
 }
