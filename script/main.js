@@ -5,12 +5,12 @@ const url = "https://api.rawg.io/api/games";
 const urlKey = `${url}?key=${apiKey}`;
 const main = document.getElementById("main");
 const modalOpen = false;
+var idGlobal = [];
 let singleColumnGrid = false;
 var page;
 var loadCardComplete = false;
 let loadpage = false;
 window.addEventListener("load", pageStarted);
-
 
 function pageStarted() {
   document.querySelector(".icon_search").addEventListener("click", searchGame);
@@ -82,7 +82,7 @@ async function getGamesInformation(url, info) {
 
 //     Create cards
 let createcard = ``;
-function cardsCreation(cardinfo) {
+async function cardsCreation(cardinfo) {
   page = cardinfo.next;
   loadCardComplete = false;
   for (let k = 0; k < cardinfo.results.length; k++) {
@@ -133,9 +133,13 @@ function cardsCreation(cardinfo) {
                                         </div>
                                     </div>
                         </div>
+                        <div class="description-column">${await description(
+                          actualCard.id
+                        )}</div>
         </button>
         </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
+    idGlobal.push(actualCard.id);
   }
   loadCardComplete = true;
   document.querySelector(".loader-cards").style.display = "none";
@@ -375,7 +379,7 @@ async function showModalEvent(id) {
   let modal = document.getElementById("modal-back-sadow");
   modal.style.display = "flex";
   let exit = document.querySelector(".exit");
-  document.querySelector(".exit-click").addEventListener("click", closeModal)
+  document.querySelector(".exit-click").addEventListener("click", closeModal);
   exit.addEventListener("click", closeModal);
 }
 
@@ -456,97 +460,84 @@ function changeColumnsButton(cardsData) {
   const buttonChangetoColumns = document.querySelector(".button-column");
   const buttonChangetoGrid = document.querySelector(".button-grid");
 
-  buttonChangetoColumns.addEventListener("click", async (e) => {
-    if (singleColumnGrid === false) {
-      singleColumnGrid = true;
+  buttonChangetoColumns.addEventListener("click", singleColumnFunction);
+  buttonChangetoGrid.addEventListener("click", multipleColumnsFunction);
+}
+
+async function singleColumnFunction() {
+  if (singleColumnGrid === false) {
+    document
+      .getElementById("card-grid-container")
+      .classList.remove("grid-container");
+    document
+      .getElementById("card-grid-container")
+      .classList.add("one-column-container");
+    let cardStyle = document.querySelectorAll(".cards-style");
+    let cardbuttonbox = document.querySelectorAll("#button");
+    let imgcolumn = document.querySelectorAll(".image-card");
+    let columninfo = document.querySelectorAll(".bottom-info-card");
+    let titlecontainer = document.querySelectorAll(
+      ".title-plataform-container"
+    );
+    let title = document.querySelectorAll("#title");
+    let date = document.querySelectorAll(".date-container");
+    let rank = document.querySelectorAll(".number-gif");
+    let ranknumber = document.querySelectorAll(".number-game");
+    for (let i = 0; i < idGlobal.length; i++) {
+      cardStyle[i].classList.add("cards-style-new");
+      cardbuttonbox[i].classList.add("card-interact-button-new");
+      imgcolumn[i].classList.add("image-card-new");
+      columninfo[i].classList.add("bottom-info-card-new");
+      titlecontainer[i].classList.add("title-plataform-container-new");
+      title[i].classList.add("game-title-new");
+      date[i].classList.add("date-container-new");
+      rank[i].classList.add("number-gif-new");
+      ranknumber[i].classList.add("number-game-new");
       document
-        .getElementById("card-grid-container")
-        .classList.remove("grid-container");
-      document
-        .getElementById("card-grid-container")
-        .classList.add("one-column-container");
-      let cardStyle = document.querySelectorAll(".cards-style");
-      let cardbuttonbox = document.querySelectorAll("#button");
-      let imgcolumn = document.querySelectorAll(".image-card");
-      let columninfo = document.querySelectorAll(".bottom-info-card");
-      let titlecontainer = document.querySelectorAll(
-        ".title-plataform-container"
-      );
-      let title = document.querySelectorAll("#title");
-      let date = document.querySelectorAll(".date-container");
-      let rank = document.querySelectorAll(".number-gif");
-      let ranknumber = document.querySelectorAll(".number-game");
-      for (let i = 0; i < cardsData.results.length; i++) {
-        const cardDescrition = cardsData.results[i];
-        cardStyle[i].style.width = "80%";
-        cardStyle[i].style.height = "538px";
-        cardbuttonbox[i].style.display = "flex";
-        cardbuttonbox[i].style.alignItems = "center";
-        imgcolumn[i].style.width = "100%";
-        imgcolumn[i].style.height = "315px";
-        columninfo[i].style.width = "89.5%";
-        columninfo[i].style.padding = "10px";
-        titlecontainer[i].style.height = "50px";
-        title[i].style.overflow = "";
-        title[i].style.textOverflow = "";
-        date[i].style.display = "flex";
-        date[i].style.marginTop = "17px";
-        date[i].style.gap = "40px";
-        rank[i].style.display = "flex";
-        rank[i].style.marginTop = "10px";
-        ranknumber[i].style.marginRight = "60px";
-        ranknumber[i].style.paddingTop = "10px";
-        let descriptioncolumn = `<div class="description-column">${await description(
-          cardDescrition.id
-        )}</div>`;
-        cardbuttonbox[i].innerHTML += descriptioncolumn;
-      }
+        .querySelectorAll(".description-column")
+        [i].classList.add("show-content");
+      /* document.querySelectorAll(".description-column")[i].innerHTML =
+        await description(idGlobal[i]); */
     }
-  });
-  buttonChangetoGrid.addEventListener("click", async (e) => {
-    if (singleColumnGrid === true) {
+  }
+  singleColumnGrid = true;
+}
+function multipleColumnsFunction() {
+  if (singleColumnGrid === true) {
+    document
+      .getElementById("card-grid-container")
+      .classList.remove("one-column-container");
+    document
+      .getElementById("card-grid-container")
+      .classList.add("grid-container");
+    let cardStyle = document.querySelectorAll(".cards-style");
+    let cardbuttonbox = document.querySelectorAll("#button");
+    let imgcolumn = document.querySelectorAll(".image-card");
+    let columninfo = document.querySelectorAll(".bottom-info-card");
+    let titlecontainer = document.querySelectorAll(
+      ".title-plataform-container"
+    );
+    let title = document.querySelectorAll("#title");
+    let date = document.querySelectorAll(".date-container");
+    let rank = document.querySelectorAll(".number-gif");
+    let ranknumber = document.querySelectorAll(".number-game");
+    let cardDescription = document.querySelectorAll(".description-column");
+    for (let i = 0; i < idGlobal.length; i++) {
+      cardStyle[i].classList.remove("cards-style-new");
+      cardbuttonbox[i].classList.remove("card-interact-button-new");
+      imgcolumn[i].classList.remove("image-card-new");
+      columninfo[i].classList.remove("bottom-info-card-new");
+      titlecontainer[i].classList.remove("title-plataform-container-new");
+      title[i].classList.remove("game-title-new");
+      date[i].classList.remove("date-container-new");
+      rank[i].classList.remove("number-gif-new");
+      ranknumber[i].classList.remove("number-game-new");
       document
-        .getElementById("card-grid-container")
-        .classList.remove("one-column-container");
-      document
-        .getElementById("card-grid-container")
-        .classList.add("grid-container");
-      let cardStyle = document.querySelectorAll(".cards-style");
-      let cardbuttonbox = document.querySelectorAll("#button");
-      let imgcolumn = document.querySelectorAll(".image-card");
-      let columninfo = document.querySelectorAll(".bottom-info-card");
-      let titlecontainer = document.querySelectorAll(
-        ".title-plataform-container"
-      );
-      let title = document.querySelectorAll("#title");
-      let date = document.querySelectorAll(".date-container");
-      let rank = document.querySelectorAll(".number-gif");
-      let ranknumber = document.querySelectorAll(".number-game");
-      let cardDescription = document.querySelectorAll(".description-column");
-      for (let i = 0; i < cardsData.results.length; i++) {
-        cardStyle[i].style.width = "363px";
-        cardStyle[i].style.height = "314px";
-        cardbuttonbox[i].style.display = "auto";
-        cardbuttonbox[i].style.alignItems = "";
-        imgcolumn[i].style.width = "363px";
-        imgcolumn[i].style.height = "217.3px";
-        columninfo[i].style.width = "auto";
-        columninfo[i].style.padding = "";
-        titlecontainer[i].style.height = "23px";
-        title[i].style.overflow = "hidden";
-        title[i].style.textOverflow = "ellipsis";
-        date[i].style.display = "";
-        date[i].style.marginTop = "0";
-        date[i].style.gap = "";
-        rank[i].style.display = "";
-        rank[i].style.marginTop = "";
-        ranknumber[i].style.marginRight = "";
-        ranknumber[i].style.paddingTop = "";
-        cardDescription[i].remove();
-        singleColumnGrid = false;
-      }
+        .querySelectorAll(".description-column")
+        [i].classList.remove("show-content");
     }
-  });
+  }
+  singleColumnGrid = false;
 }
 
 // searching interaction
@@ -656,6 +647,9 @@ async function applySearchresults(searchInput) {
                                         </div>
                                     </div>
                         </div>
+                        <div class="description-column">${await description(
+                          dataResults.id
+                        )}</div>
         </button>
         </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
@@ -722,6 +716,9 @@ async function homeGame() {
                                         </div>
                                     </div>
                         </div>
+                        <div class="description-column">${await description(
+                          dataResults.id
+                        )}</div>
         </button>
         </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
@@ -793,6 +790,10 @@ async function thisWeek() {
                                     </div>
                                 </div>
                     </div>
+                    <div class="description-column">${await description(
+                      dataResults.id
+                    )}</div>
+                    
     </button>
     </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
@@ -862,6 +863,9 @@ async function thisMonth() {
                                     </div>
                                 </div>
                     </div>
+                    <div class="description-column">${await description(
+                      dataResults.id
+                    )}</div>
     </button>
     </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
@@ -968,9 +972,13 @@ async function loadScroll(pagescrollindg) {
                                         </div>
                                     </div>
                         </div>
+                        <div class="description-column">${await description(
+                          dataResults.id
+                        )}</div>
         </button>
         </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
+    idGlobal.push(dataResults.id);
   }
   page = pageData.next;
   loadpage = false;
@@ -985,8 +993,8 @@ function logout() {
 }
 
 function openNav() {
-  document.querySelector(".nav-tablet-container").style.display="flex";
+  document.querySelector(".nav-tablet-container").style.display = "flex";
 }
 function closeNav() {
-  document.querySelector(".nav-tablet-container").style.display="none";
+  document.querySelector(".nav-tablet-container").style.display = "none";
 }

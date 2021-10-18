@@ -3,7 +3,6 @@ const user = document.getElementById("useremail");
 const password = document.getElementById("pasword");
 document.getElementById("useremail").addEventListener("click", EventRemoveUser);
 document.getElementById("password").addEventListener("click", EventRemovePass);
-
 carouselInteractionfunction();
 
 // Remove pass and email
@@ -12,6 +11,11 @@ function EventRemoveUser() {
 }
 function EventRemovePass() {
   document.getElementById("error-pass").style.display = "none";
+}
+
+function errorshow() {
+  document.getElementById("error").style.display = "flex";
+  document.getElementById("error-pass").style.display = "flex";
 }
 
 // Event Login
@@ -24,12 +28,10 @@ form.addEventListener("submit", (e) => {
     let loginserver = UserServer(email, pass);
 
     if (loginserver === "error") {
-      document.getElementById("error").style.display = "flex";
-      document.getElementById("error-pass").style.display = "flex";
+      errorshow();
     }
   } else {
-    document.getElementById("error").style.display = "flex";
-    document.getElementById("error-pass").style.display = "flex";
+    errorshow();
   }
 
   //
@@ -65,8 +67,7 @@ async function UserServer(email, password) {
       password: `${password}`,
     }),
   }).catch((error) => {
-    document.getElementById("error").style.display = "flex";
-    document.getElementById("error-pass").style.display = "flex";
+    errorshow();
   });
   const loginData = await loginResponse.json();
   if (loginData.status === 200 || 201) {
