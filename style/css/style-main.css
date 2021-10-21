@@ -567,8 +567,17 @@ a {
   width: 100%;
   height: 100%;
 }
-.button-grid:hover {
-  color: #7d7d7d;
+.button-grid-style:hover {
+ fill: #ffffff;
+}
+.button-column-style:hover {
+  fill: #ffffff;
+}
+.selected-button-column {
+  fill: #515151;
+}
+.noselected-button-column {
+fill: #303030;
 }
 /*  css columns */
 
@@ -612,6 +621,14 @@ a {
   background-repeat: no-repeat;
   background-position: center;
   background-color: #141414;
+  display: none;
+}
+.loader-more {
+  background-color: #141414;
+  width: 100%;
+  height: 800px;
+  position: absolute;
+  z-index: 1;
   display: none;
 }
 .exit-click {

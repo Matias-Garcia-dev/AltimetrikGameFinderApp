@@ -70,6 +70,8 @@ fetch(urlKey)
     console.log("failed to get the information of the games");
   });
 
+
+
 async function getGamesInformation(url, info) {
   const result = await fetch(url, info);
   if (result.status === 200) {
@@ -133,9 +135,7 @@ async function cardsCreation(cardinfo) {
                                         </div>
                                     </div>
                         </div>
-                        <div class="description-column">${await description(
-                          actualCard.id
-                        )}</div>
+                        <div class="description-column"></div>
         </button>
         </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
@@ -143,6 +143,14 @@ async function cardsCreation(cardinfo) {
   }
   loadCardComplete = true;
   document.querySelector(".loader-cards").style.display = "none";
+  descriptiontext(idGlobal);
+}
+
+async function descriptiontext(id){
+  let descriptionContainer = document.querySelectorAll(".description-column");
+  for (let e = 0 ; e < descriptionContainer.length; e ++) {
+    descriptionContainer[e].innerHTML += await description(id[e])
+  }
 }
 
 // Platforms icons in the card
@@ -466,6 +474,10 @@ function changeColumnsButton(cardsData) {
 
 async function singleColumnFunction() {
   if (singleColumnGrid === false) {
+    document.querySelector(".button-grid-style").classList.remove("selected-button-column");
+    document.querySelector(".button-grid-style").classList.add("noselected-button-column");
+    document.querySelector(".button-column-style").classList.add("selected-button-column");
+    document.querySelector(".button-column-style").classList.remove("noselected-button-column");
     document
       .getElementById("card-grid-container")
       .classList.remove("grid-container");
@@ -496,14 +508,16 @@ async function singleColumnFunction() {
       document
         .querySelectorAll(".description-column")
         [i].classList.add("show-content");
-      /* document.querySelectorAll(".description-column")[i].innerHTML =
-        await description(idGlobal[i]); */
     }
   }
   singleColumnGrid = true;
 }
 function multipleColumnsFunction() {
   if (singleColumnGrid === true) {
+    document.querySelector(".button-column-style").classList.remove("selected-button-column");
+    document.querySelector(".button-column-style").classList.add("noselected-button-column");
+    document.querySelector(".button-grid-style").classList.add("selected-button-column");
+    document.querySelector(".button-grid-style").classList.remove("noselected-button-column");
     document
       .getElementById("card-grid-container")
       .classList.remove("one-column-container");
@@ -544,50 +558,11 @@ function multipleColumnsFunction() {
 function searchGame() {
   let searchinputText = document.getElementById("search-input").value;
   applySearchresults(searchinputText);
-  function gridContainercards() {
-    document
-      .getElementById("card-grid-container")
-      .classList.remove("one-column-container");
-    document
-      .getElementById("card-grid-container")
-      .classList.add("grid-container");
-    let cardStyle = document.querySelectorAll(".cards-style");
-    let cardbuttonbox = document.querySelectorAll("#button");
-    let imgcolumn = document.querySelectorAll(".image-card");
-    let columninfo = document.querySelectorAll(".bottom-info-card");
-    let titlecontainer = document.querySelectorAll(
-      ".title-plataform-container"
-    );
-    let title = document.querySelectorAll("#title");
-    let date = document.querySelectorAll(".date-container");
-    let rank = document.querySelectorAll(".number-gif");
-    let ranknumber = document.querySelectorAll(".number-game");
-    let cardDescription = document.querySelectorAll(".description-column");
-    for (let i = 0; i < 20; i++) {
-      cardStyle[i].style.width = "363px";
-      cardStyle[i].style.height = "314px";
-      cardbuttonbox[i].style.display = "auto";
-      cardbuttonbox[i].style.alignItems = "";
-      imgcolumn[i].style.width = "363px";
-      imgcolumn[i].style.height = "217.3px";
-      columninfo[i].style.width = "auto";
-      columninfo[i].style.padding = "";
-      titlecontainer[i].style.height = "23px";
-      title[i].style.overflow = "hidden";
-      title[i].style.textOverflow = "ellipsis";
-      date[i].style.display = "";
-      date[i].style.marginTop = "0";
-      date[i].style.gap = "";
-      rank[i].style.display = "";
-      rank[i].style.marginTop = "";
-      ranknumber[i].style.marginRight = "";
-      ranknumber[i].style.paddingTop = "";
-      cardDescription[i].remove();
-    }
-  }
+  multipleColumnsFunction()
 }
 
 async function applySearchresults(searchInput) {
+  idGlobal = [];
   document.querySelector(".loader-cards").style.display = "block";
   const fetchSearchApi = await fetch(`${urlKey}&search=${searchInput}`);
   const dataSearched = await fetchSearchApi.json();
@@ -647,20 +622,21 @@ async function applySearchresults(searchInput) {
                                         </div>
                                     </div>
                         </div>
-                        <div class="description-column">${await description(
-                          dataResults.id
-                        )}</div>
+                        <div class="description-column"></div>
         </button>
         </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
+  idGlobal.push(dataResults.id);
   }
   document.querySelector(".loader-cards").style.display = "none";
+  descriptiontext(idGlobal)
 }
 
 async function homeGame() {
   document.querySelector(".loader-cards").style.display = "block";
   const fetchHomeApi = await fetch(`${urlKey}`);
   const dataHome = await fetchHomeApi.json();
+  idGlobal = [];
   page = dataHome.next;
   loadpage = false;
   document.getElementById("new-trend").innerHTML = "New and trending";
@@ -716,14 +692,14 @@ async function homeGame() {
                                         </div>
                                     </div>
                         </div>
-                        <div class="description-column">${await description(
-                          dataResults.id
-                        )}</div>
+                        <div class="description-column"></div>
         </button>
         </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
+    idGlobal.push(dataResults.id);
   }
   document.querySelector(".loader-cards").style.display = "none";
+  descriptiontext(idGlobal)
 }
 
 async function thisWeek() {
@@ -735,6 +711,7 @@ async function thisWeek() {
     `${urlKey}&dates=${lastweekDate},${todayDate}`
   );
   const dataweek = await fetchLastweek.json();
+  idGlobal = [];
   page = dataweek.next;
   document.getElementById("new-trend").innerHTML = "This Week";
   document.querySelector(
@@ -790,15 +767,15 @@ async function thisWeek() {
                                     </div>
                                 </div>
                     </div>
-                    <div class="description-column">${await description(
-                      dataResults.id
-                    )}</div>
+                    <div class="description-column"></div>
                     
     </button>
     </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
+  idGlobal.push(dataResults.id);
   }
   document.querySelector(".loader-cards").style.display = "none";
+  descriptiontext(idGlobal)
 }
 
 async function thisMonth() {
@@ -807,6 +784,7 @@ async function thisMonth() {
   let todayDate = thisDay();
   const fetchLastmonth = await fetch(`${urlKey}&dates=${month},${todayDate}`);
   const datamonth = await fetchLastmonth.json();
+  idGlobal = []
   page = datamonth.next;
   loadpage = false;
   document.getElementById("new-trend").innerHTML = "This Month";
@@ -863,14 +841,14 @@ async function thisMonth() {
                                     </div>
                                 </div>
                     </div>
-                    <div class="description-column">${await description(
-                      dataResults.id
-                    )}</div>
+                    <div class="description-column"></div>
     </button>
     </li>`;
     document.querySelector("#card-grid-container").innerHTML += createcard;
+  idGlobal.push(actualCard.id);
   }
   document.querySelector(".loader-cards").style.display = "none";
+  descriptiontext(idGlobal);
 }
 function lastweek() {
   var today = new Date();
@@ -998,3 +976,55 @@ function openNav() {
 function closeNav() {
   document.querySelector(".nav-tablet-container").style.display = "none";
 }
+
+// callback
+/* callbackFirst( 2, function(firstResult, err) {
+  if (!err) {
+    console.log(`Callback result:${firstResult}`);
+    callbackSecond (firstResult, function(secondResult, err ) {
+      console.log(`Callback result:${secondResult}`);
+      if(!err){
+        callbackThird (secondResult, function(thirdResult, err ) {
+          if(!err) {
+            console.log(`Callback result:${thirdResult}`)
+          }
+        })
+      }
+    })
+  }
+})
+
+
+function callbackFirst(value, callback) {
+  callback(value +2, false);
+}
+
+function callbackSecond(value, callback) {
+  callback(value +2, false);
+}
+
+function callbackThird(value, callback) {
+  callback(value +2, false);
+}
+
+var promise = new Promise ( function( resolve, reject) {
+  resolve(2);
+})
+
+promise.then(first).then(second).then(third)
+.then( response => { console.log(`Promise result:${response}`)});
+
+function first(value) {
+  return(value +2);
+}
+
+function second(value) {
+  return(value +2);
+}
+
+function third(value) {
+  return(value +2);
+} */
+
+
+// change color buttons hover
