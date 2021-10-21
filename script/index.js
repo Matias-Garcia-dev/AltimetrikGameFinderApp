@@ -5,18 +5,7 @@ document.getElementById("useremail").addEventListener("click", EventRemoveUser);
 document.getElementById("password").addEventListener("click", EventRemovePass);
 carouselInteractionfunction();
 
-// Remove pass and email
-function EventRemoveUser() {
-  document.getElementById("error").style.display = "none";
-}
-function EventRemovePass() {
-  document.getElementById("error-pass").style.display = "none";
-}
 
-function errorshow() {
-  document.getElementById("error").style.display = "flex";
-  document.getElementById("error-pass").style.display = "flex";
-}
 
 // Event Login
 form.addEventListener("submit", (e) => {
@@ -109,25 +98,7 @@ function carouselInteractionfunction() {
     targetSlide.classList.add("current-slide");
   };
 
-  /* const updateDots = () =>{
-     currentDot.classList.remove('current-slide');
-     targetDot.classList.add('current-slide');
-   } */
-
-  /* img.addEventListener("click", (e) => {
-    let currentSlide = track.querySelector(".current-slide");
-    let nextSlide = currentSlide.nextElementSibling;
-    const startSlide = track.querySelector("#carousel-welcome-image");
-    const currentDot = dotsNav.querySelector(".current-slide");
-    const nextDot = currentDot.nextElementSibling;
-    if (nextSlide == null) {
-      startSlide.classList.add("current-slide");
-    } else {
-      movetoSlide(track, currentSlide, nextSlide); */
-  /* updateDots(currentDot, nextDot) */
-  /*   }
-  });
- */
+  
   dotsNav.addEventListener("click", (e) => {
     const targetDot = e.target.closest("input");
     if (!targetDot) return;
@@ -139,8 +110,67 @@ function carouselInteractionfunction() {
     check[0].classList.remove("checked");
 
     movetoSlide(track, currentSlide, targetSlide);
-    /* updateDots(currentDot, targetDot); */
-    /* currentDot.classList.remove('current-slide');
-        targetDot.classList.add('current-slide'); */
   });
+}
+
+// hover inputs
+let emailHover = document.querySelectorAll(".emailHover")
+let passHover = document.querySelectorAll(".passHover")
+
+emailHover.forEach(element => element.addEventListener('mouseenter', hoverEmail));
+emailHover.forEach(element => element.addEventListener('mouseleave', nohoverEmail));
+
+passHover.forEach(element => element.addEventListener('mouseenter', hoverPass));
+passHover.forEach(element => element.addEventListener('mouseleave', nohoverPass));
+
+function hoverEmail() {
+  emailHover[0].classList.add("whiteHover")
+  emailHover[1].classList.add("whiteHover")
+  document.querySelector(".perfil").style.opacity="1"
+}
+function hoverPass() {
+  passHover[0].classList.add("whiteHover")
+  passHover[1].classList.add("whitepass")
+  document.querySelector(".icon-eye").classList.add("whitepassleft")
+  document.querySelector(".key").style.opacity="1"
+  
+}
+function nohoverEmail() {
+  emailHover[0].classList.remove("whiteHover")
+  emailHover[1].classList.remove("whiteHover")
+  document.querySelector(".perfil").style.opacity="0.5"
+}
+function nohoverPass() {
+  passHover[0].classList.remove("whiteHover")
+  passHover[1].classList.remove("whitepass")
+  document.querySelector(".icon-eye").classList.remove("whitepassleft")
+  document.querySelector(".key").style.opacity="0.5"
+}
+
+
+// Remove pass and email
+function EventRemoveUser() {
+  document.getElementById("error").style.display = "none";
+  emailHover[0].classList.remove("redHover");
+  emailHover[1].classList.remove("redHover");
+  document.querySelector(".perfil").setAttribute("src", "style/image-icons/user.png");
+}
+function EventRemovePass() {
+  document.getElementById("error-pass").style.display = "none";
+  passHover[0].classList.remove("redHover");
+  passHover[1].classList.remove("redPass");
+  document.querySelector(".icon-eye").classList.remove("redPassLeft");
+  document.querySelector(".key").setAttribute("src", "style/image-icons/key.png");
+}
+
+function errorshow() {
+  emailHover[0].classList.add("redHover");
+  emailHover[1].classList.add("redHover");
+  passHover[0].classList.add("redHover");
+  passHover[1].classList.add("redPass");
+  document.querySelector(".icon-eye").classList.add("redPassLeft");
+  document.querySelector(".perfil").setAttribute("src", "style/image-icons/perfilred.png");
+  document.querySelector(".key").setAttribute("src", "style/image-icons/keyred.png");
+  document.getElementById("error").style.display = "flex";
+  document.getElementById("error-pass").style.display = "flex";
 }
