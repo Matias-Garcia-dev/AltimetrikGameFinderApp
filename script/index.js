@@ -1,8 +1,8 @@
 const form = document.querySelector("form");
 const user = document.getElementById("useremail");
 const password = document.getElementById("pasword");
-document.getElementById("useremail").addEventListener("click", EventRemoveUser);
-document.getElementById("password").addEventListener("click", EventRemovePass);
+document.getElementById("useremail").addEventListener("click", eventRemoveUser);
+document.getElementById("password").addEventListener("click", eventRemovePass);
 carouselInteractionfunction();
 
 
@@ -76,7 +76,7 @@ function showHidePassword() {
     textpass.type = "password";
   }
 }
-// caroulsel interaction  ( no time, only click )
+// caroulsel interaction
 function carouselInteractionfunction() {
   const track = document.querySelector(".carousel-truck");
   const slides = Array.from(track.children);
@@ -149,13 +149,13 @@ function nohoverPass() {
 
 
 // Remove pass and email
-function EventRemoveUser() {
+function eventRemoveUser() {
   document.getElementById("error").style.display = "none";
   emailHover[0].classList.remove("redHover");
   emailHover[1].classList.remove("redHover");
   document.querySelector(".perfil").setAttribute("src", "style/image-icons/user.png");
 }
-function EventRemovePass() {
+function eventRemovePass() {
   document.getElementById("error-pass").style.display = "none";
   passHover[0].classList.remove("redHover");
   passHover[1].classList.remove("redPass");
