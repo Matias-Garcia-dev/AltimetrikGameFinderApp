@@ -14,7 +14,7 @@ With all of thoes steps you'll have access to the content of the page.
 
 
 TODO:
-- movile reposnsive for the login and the movile
+- movile reposnsive for the login and the main
 
 
 
