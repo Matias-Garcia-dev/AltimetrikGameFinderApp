@@ -22,7 +22,6 @@ form.addEventListener("submit", (e) => {
   } else {
     errorshow();
   }
-  console.log(validateEmail().re)
   //
   function validateEmail(email) {
     const re =

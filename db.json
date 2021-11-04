@@ -4,6 +4,16 @@
       "email": "admin@admin.com",
       "password": "asdoaldhkljqwhej@asdasdkajhsdkjahsd%$%&//%=)asd1",
       "id": 1
+    },
+    {
+      "email": "asdasd@asd.com",
+      "password": "$2a$10$KWTzC0ZeamfBu1X3tA9JFex2eGtFVMUbHAL.4DMr4R/3qs5cmot5y",
+      "id": 2
+    },
+    {
+      "email": "akljs@asd.com",
+      "password": "$2a$10$B0uYD25mn.EE4qhrrHT8kOQAmydIsaz7IHNEyeqrHX32MeJ2DRhcS",
+      "id": 3
     }
   ]
 }
