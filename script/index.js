@@ -107,7 +107,6 @@ function carouselInteractionfunction() {
   const dotsNav = document.querySelector(".carousel-dot-container");
   const dots = Array.from(dotsNav.children);
   const slideWidth = slides[0].getBoundingClientRect().width;
-  const img = document.querySelector(".carousel-truck");
 
   const setSlidePostion = (slides, index) => {
     slides.style.left = slideWidth * index + "px";
@@ -127,7 +126,6 @@ function carouselInteractionfunction() {
     const targetDot = e.target.closest("input");
     if (!targetDot) return;
     const currentSlide = track.querySelector(".current-slide");
-    const currentDot = dotsNav.querySelector(".current-slide");
     const targetIndex = dots.findIndex((dot) => dot == targetDot);
     const targetSlide = slides[targetIndex];
     let check = document.querySelectorAll(".carousel-dot");

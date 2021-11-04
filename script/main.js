@@ -1087,4 +1087,33 @@ function third(value) {
 } */
 
 
-// change color buttons hover
+// Singleton example 
+
+var Mathlibrary = function(){
+  // private count variable
+  var count = 0;
+  
+  // private method _add
+  var _add = function(a, b){
+    count++;
+    document.writeln(a + b + "- count = " + count);
+  };
+  
+  // private method _sub
+  var _sub = function(a, b){
+    count++;
+    document.writeln(a - b + "- count = " + count);
+  }
+  
+  // return public method add and sub as a JavaScript 
+  // Object literal
+  return{
+    add : _add,
+    sub : _sub
+  }
+}();
+
+// As it is a singleton, we don't need to create an object but can directly call the methods.
+const plus = Mathlibrary.add(150,100)
+const rest = Mathlibrary.sub(150,100)
+console.log(plus)

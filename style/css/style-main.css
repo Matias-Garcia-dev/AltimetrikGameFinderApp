@@ -644,6 +644,7 @@ fill: #303030;
   display: none;
 }
 .exit-click {
+  cursor: pointer;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -759,5 +760,8 @@ fill: #303030;
   }
   .moda-background-color{
     overflow-x: scroll;
+  }
+  .icon-head-cards{
+    display: none;
   }
 }
