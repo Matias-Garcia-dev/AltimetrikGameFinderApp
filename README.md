@@ -1,20 +1,16 @@
 
 How to run the project:
-
-Initialize the Json server npx json-server-auth db.json.
-Open index.html in Visual studio using Live server.
-
-Login to get access to the main screen with this example user in the ds.json:
+1- Open the file project in the Visual Studio Code.
+2- Initialize the Json server with npx json-server-auth db.json in the Visual Studio Code terminal.
+3- Open index.html in Visual studio using Live server.
+4- Login in email and password input to get access to the main screen with this example:
 "users": [ { "email": "admin@admin.com", "password": "example", }]
+
+With all of thoes steps you'll have access to the content of the page. 
 
 
 TODO:
-- Implement carusel in Login 
-- Implement logout in Main 
-- Connect the module with the API
-- Implement search feature 
-- Implement side bar interaction 
-- Made the main screen responsive
+- movile reposnsive for the login and the movile
 
 
 
