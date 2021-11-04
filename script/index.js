@@ -22,7 +22,7 @@ form.addEventListener("submit", (e) => {
   } else {
     errorshow();
   }
-
+  console.log(validateEmail().re)
   //
   function validateEmail(email) {
     const re =
@@ -33,18 +33,17 @@ form.addEventListener("submit", (e) => {
     let valid = false;
     if (password.length > 2 && password != "") {
       valid = true;
-      console.log("password-Correct");
       return valid;
     } else {
       valid = false;
-      console.log("Password-incorrect");
       return valid;
     }
   }
 });
 
+
 // Fetch with the local host Json server
-async function UserServer(email, password) {
+/* async function UserServer(email, password) {
   const loginResponse = await fetch("http://localhost:3000/users", {
     method: "POST",
     headers: {
@@ -65,6 +64,32 @@ async function UserServer(email, password) {
   }
 
   return loginResponse;
+} */
+
+function UserServer(email, password) {
+  return fetch("http://localhost:3000/users", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: `${email}`,
+      password: `${password}`,
+    }),
+  })
+  .then(fetchResponse => fetchResponse.json())
+  .then(jsonResponse =>{
+    if ( jsonResponse.status === 200 || 201) {
+      document.cookie = "authToken-" + jsonResponse.accessToken;
+      window.location = "main.html";
+      return;
+    }
+    throw new Error(jsonResponse);
+  })
+  .catch((error) => {
+    errorshow();
+  }); 
 }
 
 // Show and hide password

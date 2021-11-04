@@ -1,6 +1,10 @@
 html,
 body {
   height: 100%;
+  width: 100%;
+}
+*:focus {
+  outline: none;
 }
 body {
   background: #141414;
@@ -25,11 +29,14 @@ strong {
   font-weight: 800;
 }
 header {
+  position: static;
+  top: 0;
   width: 100%;
   height: 120px;
   background: linear-gradient(180deg, #7cd235 0%, #2bb34f 100%);
   box-shadow: 1px -3px 36px rgba(0, 0, 0, 0.5);
 }
+
 .top-header {
   display: flex;
   width: 100%;
@@ -137,6 +144,10 @@ a {
   font-size: 18px;
   line-height: 25px;
 }
+.platforms-icons{
+  height: 17px;
+  overflow: hidden;
+}
 #new-trend {
   color: #ffffff;
   font-size: 55px;
@@ -165,6 +176,7 @@ a {
   grid-template-rows: 314px 314px 314px;
   gap: 24px;
   grid-template-columns: repeat(auto-fill, minmax(363px, 1fr));
+  justify-items: center;
 }
 .one-column-container {
   display: flex;
@@ -553,7 +565,7 @@ a {
 .aditional-info-container {
   display: flex;
 }
-.modal-flexbox {
+.moda-background-color {
   width: 100%;
   height: 100%;
   background: linear-gradient(
@@ -685,7 +697,8 @@ fill: #303030;
   }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 768px)
+ {
   .nav-aside {
     display: none;
   }
@@ -695,6 +708,7 @@ fill: #303030;
   .hamburguer {
     display: block;
   }
+  
 }
 .ham_show {
   box-shadow: 14px 0px 36px 5px rgba(0, 0, 0, 0.62);
@@ -705,5 +719,45 @@ fill: #303030;
 }
 .log-nav {
   padding-left: 40px;
-  padding-top: 317px;
+  padding-top: 290px;
+}
+@media screen and (max-height: 630px) {
+  .log-nav {
+    padding-top: 100px;
+  }
+}
+@media screen and (max-height: 320px) {
+  .list-space {
+    margin: 10px;
+  }
+  .log-nav {
+    padding-top: 30px;
+  }
+}
+@media screen and (max-width: 400px) {
+  html,
+  body {
+    zoom: 79%;
+  }
+  .search{
+    display: none;
+  }
+  .icon{
+    border-radius: 20px;
+
+  }
+  @media screen and (max-width: 450px) {
+    .logout-perfil {
+      display: none;
+    }
+  }
+  .search-container{
+    padding-right: 20px;
+  }
+  .modal-grid{
+    display: block;
+  }
+  .moda-background-color{
+    overflow-x: scroll;
+  }
 }

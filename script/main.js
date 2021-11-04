@@ -103,7 +103,7 @@ async function cardsCreation(cardinfo) {
                                         <p class="game-title" id="title">${
                                           actualCard.name
                                         }</p>
-                                        <div class="plataforms-icons">${platformSelector(
+                                        <div class="platforms-icons">${platformSelector(
                                           actualCard
                                         )}</div>
                                     </div>
@@ -353,7 +353,7 @@ async function showModalEvent(id) {
       modalgenres = cardallinfo[f].querySelector("#genres").textContent;
       //platmfoms
       modalplatforms.push(
-        cardallinfo[f].querySelector(".plataforms-icons").innerHTML
+        cardallinfo[f].querySelector(".platforms-icons").innerHTML
       );
       modaldescription = await description(id);
       rank = cardallinfo[f].querySelector(".number-game").textContent;
@@ -592,7 +592,7 @@ async function applySearchresults(searchInput) {
                                         <p class="game-title" id="title">${
                                           dataResults.name
                                         }</p>
-                                        <div class="plataforms-icons">${platformSelector(
+                                        <div class="platforms-icons">${platformSelector(
                                           dataResults
                                         )}</div>
                                     </div>
@@ -662,7 +662,7 @@ async function homeGame() {
                                         <p class="game-title" id="title">${
                                           dataResults.name
                                         }</p>
-                                        <div class="plataforms-icons">${platformSelector(
+                                        <div class="platforms-icons">${platformSelector(
                                           dataResults
                                         )}</div>
                                     </div>
@@ -737,7 +737,7 @@ async function thisWeek() {
                                     <p class="game-title" id="title">${
                                       dataResults.name
                                     }</p>
-                                    <div class="plataforms-icons">${platformSelector(
+                                    <div class="platforms-icons">${platformSelector(
                                       dataResults
                                     )}</div>
                                 </div>
@@ -811,7 +811,7 @@ async function thisMonth() {
                                     <p class="game-title" id="title">${
                                       dataResults.name
                                     }</p>
-                                    <div class="plataforms-icons">${platformSelector(
+                                    <div class="platforms-icons">${platformSelector(
                                       dataResults
                                     )}</div>
                                 </div>
@@ -922,7 +922,7 @@ async function loadScroll(pagescrollindg) {
                                         <p class="game-title" id="title">${
                                           dataResults.name
                                         }</p>
-                                        <div class="plataforms-icons">${platformSelector(
+                                        <div class="platforms-icons">${platformSelector(
                                           dataResults
                                         )}</div>
                                     </div>
@@ -975,7 +975,7 @@ async function loadScroll(pagescrollindg) {
                                         <p class="game-title game-title-new" id="title">${
                                           dataResults.name
                                         }</p>
-                                        <div class="plataforms-icons">${platformSelector(
+                                        <div class="platforms-icons">${platformSelector(
                                           dataResults
                                         )}</div>
                                     </div>

@@ -17,6 +17,9 @@ body {
 * {
   font-family: "Open Sans";
 }
+*:focus {
+  outline: none;
+}
 .container {
   display: flex;
   width: 1083px;
@@ -362,16 +365,20 @@ i {
     height: 767px;
     border-radius: 10px 10px 10px 10px;
   }
-  .box-login input {
+  .useremail {
     width: 188px;
   }
   .box-login input[class="password-input"] {
     width: 138px;
   }
+  .password-input {
+    width: 137px;
+  }
   .carousel-image-box {
     display: none;
   }
   .container {
+    justify-content: center;
     width: 660px;
   }
 }
@@ -401,6 +408,7 @@ i {
   border-left: none;
 }
 .redHover {
+  color:#E07979;
   border: 1px solid #E07979;
 }
 .redHover::placeholder {
