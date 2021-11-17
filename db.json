@@ -14,6 +14,16 @@
       "email": "akljs@asd.com",
       "password": "$2a$10$B0uYD25mn.EE4qhrrHT8kOQAmydIsaz7IHNEyeqrHX32MeJ2DRhcS",
       "id": 3
+    },
+    {
+      "email": "matias@gmail.com",
+      "password": "$2a$10$TGFK/Lqtau1b0ZZVvf5S.uwJJgBNEs.WqvY/RUDHvuD.oZNSQH9uG",
+      "id": 4
+    },
+    {
+      "email": "asdas@asd.com",
+      "password": "$2a$10$/uuegFYPsDEhCg8Hm0jogutJpodgT85jibloNlSCfJkCwZDjCsGaW",
+      "id": 5
     }
   ]
 }
